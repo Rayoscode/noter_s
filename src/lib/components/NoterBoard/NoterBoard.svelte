@@ -7,61 +7,62 @@
   import LeftArrow from "$lib/assets/Icons/LeftArrow.svelte";
   import DownArrow from "$lib/assets/Icons/DownArrow.svelte";
   import RightArrow from "$lib/assets/Icons/RightArrow.svelte";
-
+  import CommandSelector from "../CommandSelector/CommandSelector.svelte";
+  let commands = ["Bold", "Italic", "Code"];
+  function onSelectedCommand() {}
 </script>
 
-<main class="board-container" >
-  <BoardHeader></BoardHeader>
-  <section >
-    <div contenteditable="true">
-
-    </div>
-
+<main class="board-container">
+  <BoardHeader />
+  <section>
+    <div contenteditable="true" />
   </section>
   <BoardControl position="top-left">
     <div class="control-board-container">
-      <HamburgerIcon/>
-      <Grid/>
+      <HamburgerIcon />
+      <Grid />
     </div>
   </BoardControl>
   <BoardControl position="bottom-right">
     <div class="control-board-container">
-      <UpArrow></UpArrow>
-      <RightArrow></RightArrow>
-
+      <UpArrow />
+      <RightArrow />
     </div>
   </BoardControl>
   <BoardControl position="bottom-left">
     <div class="control-board-container">
-      <LeftArrow></LeftArrow>
-      <DownArrow></DownArrow>
+      <LeftArrow />
+      <DownArrow />
     </div>
   </BoardControl>
-
+  <CommandSelector
+    {commands}
+    onSelectCommand={onSelectedCommand}
+    position={{ x: 400, y: 400 }}
+  />
 </main>
 
-
 <style lang="scss">
-  .control-board-container{
+  .control-board-container {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
   }
 
-  .board-container{
+  .board-container {
     background: #212121;
     box-sizing: border-box;
     width: 100vw;
-    height:auto;
+    height: auto;
     min-height: 100vh;
-    section{
+    section {
       width: 100%;
       height: inherit;
       display: flex;
     }
   }
-  [contenteditable = "true"]{
+  [contenteditable="true"] {
     word-break: break-all;
     padding: 5px 5px 0 5px;
     background: #212121;
@@ -71,7 +72,7 @@
     outline: none;
     caret-color: white;
     color: white;
-    &:focus{
+    &:focus {
       outline: none;
     }
   }
