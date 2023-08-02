@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import BannerEditOptions from "$lib/components/NoterBoard/BoardHeader/BannerEditOptions/BannerEditOptions.svelte";
-  import Resizable from "$lib/components/Resizable/Resizable.svelte";
+  import ResizableAndDraggable from "$lib/components/ResizableAndDraggable/ResizableAndDraggable.svelte";
   //  Mock Data
   let headerData = {
     projectName: "Proyectos 1",
@@ -10,16 +10,18 @@
       backgroundUrl: "url(https://wallpaperaccess.com/full/3497712.jpg)",
       backgroundPosition: "center",
     },
-    positionXBanner: "60",
-    positionYBanner: "60",
     headerHeight: 300,
     headerMinHeight: 200,
   };
   // TODO: Cropping operation for bg img with background-position
 
-  let bannerSizes = { height: 150, width: 400 };
+  // let bannerSizes = { height: 150, width: 400 };
   let bannerOptionsVisible = false;
-  console.log("bannerSizes", bannerSizes);
+  /** @type {(event:MouseEvent)=>void}*/
+  function stopDragging(event) {
+    event.stopPropagation();
+    return;
+  }
 </script>
 
 <header>
@@ -28,21 +30,18 @@
     style="min-height: {headerData.headerMinHeight}px; height:{headerData.headerHeight}px;"
   >
     {#if headerData.imageCSSProps.backgroundUrl !== ""}
-      <!--      <img on:error={errorImageHandle} src={headerData.backgroundImage} style="height:{headerData.headerHeight}px" alt="Header Background Image"/>-->
-      <div
-        style="background: {headerData.imageCSSProps.backgroundUrl};
+      <ResizableAndDraggable resizableBottom={true}>
+        <div
+          style="background: {headerData.imageCSSProps.backgroundUrl};
     height:{headerData.headerHeight}px;
     background-position:{headerData.imageCSSProps.backgroundPosition};
     background-size:cover"
-      />
+        />
+      </ResizableAndDraggable>
     {/if}
   </div>
 
-  <Resizable
-    size={bannerSizes}
-    position={{ x: 60, y: 60 }}
-    resizableHorizontal={true}
-  >
+  <ResizableAndDraggable position={{ x: 60, y: 60 }} resizableHorizontal={true}>
     <div
       on:mouseenter={() => {
         bannerOptionsVisible = true;
@@ -56,6 +55,8 @@
       <div>
         {#if bannerOptionsVisible}
           <div
+            on:mousedown={stopDragging}
+            role="none"
             in:fade={{ duration: 200, delay: 100 }}
             out:fade={{ duration: 200, delay: 100 }}
             class="option-banner-container"
@@ -64,11 +65,15 @@
           </div>
         {/if}
         <div class="title-container">
-          <input type="text" value={headerData.projectName} />
+          <input
+            on:mousedown={stopDragging}
+            type="text"
+            value={headerData.projectName}
+          />
         </div>
       </div>
     </div>
-  </Resizable>
+  </ResizableAndDraggable>
 </header>
 
 <style lang="scss">
@@ -104,6 +109,7 @@
       position: relative;
       .option-banner-container {
         width: 90%;
+        cursor: default;
         position: absolute;
         overflow: hidden;
         padding-top: 10px;

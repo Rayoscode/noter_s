@@ -4,7 +4,7 @@ import postcssPresetEnv from 'postcss-preset-env';
 const config = {
   plugins: [
     postcssPresetEnv({
-      features: { 'nested-rules': true },
+      features: { 'nesting-rules': true },
     }),
   ],
 };
