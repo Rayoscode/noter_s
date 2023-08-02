@@ -57,13 +57,13 @@
   function onResizeEnd(event) {
     if (mousePressed) {
       console.log(event);
-      if (resizableRight)
+      if (resizableRight || resizableHorizontal)
         event.view?.removeEventListener("mousemove", onRightResize);
-      if (resizableLeft)
+      if (resizableLeft || resizableHorizontal)
         event.view?.removeEventListener("mousemove", onLeftResize);
-      if (resizableTop)
+      if (resizableTop || resizableVertical)
         event.view?.removeEventListener("mousemove", onTopResize);
-      if (resizableBottom)
+      if (resizableBottom || resizableVertical)
         event.view?.removeEventListener("mousemove", onLeftResize);
 
       mousePressed = false;
@@ -85,6 +85,20 @@
     event.view?.addEventListener("mouseup", onResizeEnd);
     event.preventDefault();
   }
+  /** @type {(event:MouseEvent)=>void}*/
+  function onMouseDownResizeTop(event) {
+    mousePressed = true;
+    event.view?.window.addEventListener("mousemove", onTopResize);
+    event.view?.addEventListener("mouseup", onResizeEnd);
+    event.preventDefault();
+  }
+  /** @type {(event:MouseEvent)=>void}*/
+  function onMouseDownResizeBottom(event) {
+    mousePressed = true;
+    event.view?.window.addEventListener("mousemove", onBottomResize);
+    event.view?.addEventListener("mouseup", onResizeEnd);
+    event.preventDefault();
+  }
 </script>
 
 <div
@@ -92,16 +106,19 @@
   style="width:{size.width}px; height:{size.height}px ;top:{position.y}px; left:{position.x}px"
 >
   <div>
-    {#if resizableVertical}
-      <div class="resizable-top" />
-      <div class="resizable-bottom" />
+    {#if resizableVertical || resizableTop}
+      <div role="none" class="resizable-top"></div>
+    {/if}
+    {#if resizableBottom || resizableVertical}
+      <div role="none" class="resizable-bottom" ></div>
+
     {/if}
     {#if resizableHorizontal || resizableLeft}
       <div
         on:mousedown={onMouseDownResizeLeft}
         role="none"
         class="resizable-left"
-      />
+      ></div>
     {/if}
     {#if resizableHorizontal || resizableRight}
       <div
@@ -109,7 +126,7 @@
         role="none"
         style="left: {size.width - 8}px"
         class="resizable-right"
-      />
+      ></div>
     {/if}
     <slot />
   </div>
@@ -177,19 +194,19 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 8px;
+    height: 10px;
     cursor: n-resize;
-    z-index: -1;
+    z-index: 10;
   }
   .resizable-bottom {
     background: red;
     width: 100%;
-    height: 8px;
+    height: 10px;
     position: absolute;
     top: 0;
     left: 0;
     cursor: n-resize;
-    z-index: -1;
+    z-index: 10;
   }
   .resizable-right-diagonal {
     cursor: ns-resize;

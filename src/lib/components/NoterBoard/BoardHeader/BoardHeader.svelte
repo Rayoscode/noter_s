@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import BannerEditOptions from "$lib/components/NoterBoard/BoardHeader/BannerEditOptions/BannerEditOptions.svelte";
-  import Resizable from "$lib/components/Resizable.svelte";
+  import Resizable from "$lib/components/Resizable/Resizable.svelte";
   //  Mock Data
   let headerData = {
     projectName: "Proyectos 1",
