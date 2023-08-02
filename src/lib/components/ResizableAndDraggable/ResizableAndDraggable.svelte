@@ -10,6 +10,7 @@
   export let resizableEdges = false;
   export let resizableHorizontal = false;
   export let resizableVertical = false;
+  export let initialWidth = "auto";
   export let maxWidth = 800;
   export let maxHeight = 1000;
   export let resizableLeft = false;
@@ -71,8 +72,8 @@
     ) {
       event.preventDefault();
       return;
-      position.y = event.movementY;
     }
+    height = event.movementY;
   }
   /** @type {(event:MouseEvent)=>void}*/
   function onMoveComponent(event) {
@@ -145,7 +146,7 @@
   bind:this={containerRef}
   role="none"
   class="resizable-container"
-  style="width:{width ? width + 'px' : '50%'};height:{height
+  style="width:{width ? width + 'px' : initialWidth};height:{height
     ? height + 'px'
     : 'inherit'} ; top:{position.y}px; left:{position.x}px"
 >
@@ -162,6 +163,7 @@
         role="none"
         on:mousedown={onMouseDownResizeBottom}
         class="resizable-bottom"
+        style="top:{height ? height - 8 + 'px' : '0'};"
       />
     {/if}
     {#if resizableHorizontal || resizableLeft}
@@ -175,14 +177,16 @@
       <div
         on:mousedown={onMouseDownResizeRight}
         role="none"
-        style="left: {width ? width - 8 + 'px' : '0px'}"
+        style="left: {width ? width - 8 + 'px' : 'auto'}"
         class="resizable-right"
       />
     {/if}
     <div
-      style="width:{width ? width - 10 + 'px' : '50%'};height:{height
+      style="width:{width ? width + 'px' : initialWidth};height:{height
         ? height - 10 + 'px'
-        : 'inherit'}"
+        : 'inherit'}; {draggable
+        ? 'border: solid 5px transparent; cursor:auto;'
+        : ''};"
       role="none"
       on:mousedown={onMouseDownMoving}
       class="draggable-container"
@@ -212,8 +216,8 @@
 
 <style lang="scss">
   .draggable-container {
-    border: solid 5px transparent;
     width: inherit;
+    max-width: 100vw;
     height: inherit;
     cursor: move;
     > * {

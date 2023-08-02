@@ -22,6 +22,7 @@
     event.stopPropagation();
     return;
   }
+  let initialWidthBackground = "100%";
 </script>
 
 <header>
@@ -30,7 +31,10 @@
     style="min-height: {headerData.headerMinHeight}px; height:{headerData.headerHeight}px;"
   >
     {#if headerData.imageCSSProps.backgroundUrl !== ""}
-      <ResizableAndDraggable resizableBottom={true}>
+      <ResizableAndDraggable
+        initialWidth={initialWidthBackground}
+        resizableBottom={true}
+      >
         <div
           style="background: {headerData.imageCSSProps.backgroundUrl};
     height:{headerData.headerHeight}px;
