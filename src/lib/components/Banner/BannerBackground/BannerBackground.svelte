@@ -19,4 +19,10 @@ background-size:cover"
   div {
     width: 100%;
   }
+  .background-header {
+    grid-row-start: 1;
+    grid-row-end: 4;
+    grid-column-end: 4;
+    grid-column-start: 1;
+  }
 </style>

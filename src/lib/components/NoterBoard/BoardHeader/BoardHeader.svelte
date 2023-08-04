@@ -2,8 +2,7 @@
   import BannerBackground from "$lib/components/Banner/BannerBackground/BannerBackground.svelte";
   import { fade } from "svelte/transition";
   import BannerEditOptions from "$lib/components/Banner/BannerEditOptions/BannerEditOptions.svelte";
-  import ResizableAndDraggableItem from "$lib/components/ResizableAndDraggable/ResizableAndDraggableItem/ResizableAndDraggableItem.svelte";
-  import ResizableAndDraggableContainer from "$lib/components/ResizableAndDraggable/ResizableAndDraggableContainer/ResizableAndDraggableContainer.svelte";
+  import BottomResizer from "$lib/components/Resizer/BottomResizer/BottomResizer.svelte";
   //  Mock Data
   let headerData = {
     projectName: "Proyectos 1",
@@ -14,86 +13,57 @@
     },
     initialHeight: 300,
   };
-
   let headerHeight = headerData.initialHeight;
-  /** @type {(newHeaderValue:number)=>void} */
-  const setHeaderHeight = (newHeaderValue) => {
-    headerHeight = newHeaderValue;
-  };
-
-  /** @type {(event:MouseEvent)=>void}*/
-  const onVerticalResize = (event) => {
-    setHeaderHeight(headerHeight + event.movementY);
+  let bannerOptionsVisible = false;
+  /** @type {(value:number)=>void}*/
+  const changeHeaderHeight = (value) => {
+    headerHeight = value;
   };
   // TODO: Cropping operation for bg img with background-position
-
-  let bannerOptionsVisible = false;
-  /** @type {(event:MouseEvent)=>void}*/
-  function stopDragging(event) {
-    event.stopPropagation();
-    return;
-  }
 </script>
 
 <header style="height: {headerHeight}px;">
-  <ResizableAndDraggableContainer height={"100%"} width={"100%"}>
-    <ResizableAndDraggableItem
-      draggable={false}
-      initialHeight={headerData.initialHeight}
-      resizableBottom={true}
-      {onVerticalResize}
-    >
-      <BannerBackground
-        initialHeight={headerData.initialHeight}
-        backgroundPosition={headerData.imageCSSProps.backgroundUrl}
-        backgroundUrl={headerData.imageCSSProps.backgroundUrl}
-      />
-    </ResizableAndDraggableItem>
-    <ResizableAndDraggableItem
-      draggable={true}
-      initialWidth={300}
-      position={{ x: 60, y: 60 }}
-      resizableHorizontal={true}
-    >
-      <div
-        on:mouseenter={() => {
-          bannerOptionsVisible = true;
-        }}
-        on:mouseleave={() => {
-          bannerOptionsVisible = false;
-        }}
-        role="banner"
-        class="title-banner"
-      >
-        <div>
-          {#if bannerOptionsVisible}
-            <div
-              on:mousedown={stopDragging}
-              role="none"
-              in:fade={{ duration: 200, delay: 100 }}
-              out:fade={{ duration: 200, delay: 100 }}
-              class="option-banner-container"
-            >
-              <BannerEditOptions />
-            </div>
-          {/if}
-          <div class="title-container">
-            <input
-              on:mousedown={stopDragging}
-              type="text"
-              value={headerData.projectName}
-            />
-          </div>
+  <BannerBackground
+    initialHeight={headerData.initialHeight}
+    backgroundPosition={headerData.imageCSSProps.backgroundUrl}
+    backgroundUrl={headerData.imageCSSProps.backgroundUrl}
+  />
+  <div
+    on:mouseenter={() => {
+      bannerOptionsVisible = true;
+    }}
+    on:mouseleave={() => {
+      bannerOptionsVisible = false;
+    }}
+    role="banner"
+    class="title-banner"
+  >
+    <div>
+      {#if bannerOptionsVisible}
+        <div
+          role="none"
+          in:fade={{ duration: 200, delay: 100 }}
+          out:fade={{ duration: 200, delay: 100 }}
+          class="option-banner-container"
+        >
+          <BannerEditOptions />
         </div>
+      {/if}
+      <div class="title-container">
+        <input type="text" value={headerData.projectName} />
       </div>
-    </ResizableAndDraggableItem>
-  </ResizableAndDraggableContainer>
+    </div>
+  </div>
+  <BottomResizer height={300} onChangeHeight={changeHeaderHeight} />
 </header>
 
 <style lang="scss">
   header {
     width: 100%;
-    display: flex;
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+
     height: auto;
     position: relative;
   }
@@ -121,6 +91,7 @@
     background: rgba(98, 98, 98, 0.4);
     backdrop-filter: blur(4.5px);
     width: 100%;
+    transition: all 0.5s ease-out;
 
     display: inline-block;
     > div {
