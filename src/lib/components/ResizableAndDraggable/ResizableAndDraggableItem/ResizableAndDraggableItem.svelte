@@ -7,34 +7,57 @@
   // export let size;
   /** @type { { x:number,y:number} }*/
   export let position = { x: 0, y: 0 };
+  /** @type {((event:MouseEvent)=>void ) | null}*/
+  export let onHorizontalResize = null;
+  /** @type {((event:MouseEvent)=>void ) | null}*/
+  export let onVerticalResize = null;
   export let resizableEdges = false;
   export let resizableHorizontal = false;
   export let resizableVertical = false;
-  export let initialWidth = "auto";
-  export let maxWidth = 800;
-  export let maxHeight = 1000;
   export let resizableLeft = false;
   export let resizableRight = false;
   export let resizableTop = false;
   export let resizableBottom = false;
   export let draggable = false;
+  export let initialWidth = 0;
+  export let initialHeight = 0;
   // export let resizableEdgeTopRight = false;
   // export let resizableEdgeTopLeft = false;
   // export let resizableEdgeBottomRight = false;
   // export let resizableEdgeBottomLeft = false;
   // ---
   let minWidth = 150;
-  /** @type {number }*/
-  let height;
-  /** @type {number }*/
-  let width;
+  let minHeight = 50;
+  let width = initialWidth;
+  let height = initialHeight;
+  let maxHeight = 0;
+  let maxWidth = 0;
   /** @type { HTMLDivElement }*/
   let containerRef;
   let mousePressed = false;
+
   onMount(() => {
-    width = containerRef.clientWidth;
-    height = containerRef.clientHeight;
+    if (containerRef.parentElement) {
+      maxHeight = containerRef.parentElement?.clientHeight;
+      maxWidth = containerRef.parentElement?.clientWidth;
+    }
+    if (height + position.y >= maxHeight) {
+      position.y -= height + position.y - maxHeight;
+    }
+    addEventListener("resize", checkBounds);
+    return () => {
+      removeEventListener("resize", checkBounds);
+    };
   });
+
+  function checkBounds() {
+    if (containerRef.parentElement) {
+      maxHeight = containerRef.parentElement.clientHeight;
+      maxWidth = containerRef.parentElement.clientWidth;
+    }
+    console.log("position.x + width", position.x + width);
+    console.log("maxWidth", maxWidth);
+  }
 
   /** @type {(event:MouseEvent)=>void}*/
   function onRightResize(event) {
@@ -48,6 +71,9 @@
       event.preventDefault();
       return;
     }
+    if (onHorizontalResize) {
+      onHorizontalResize(event);
+    }
     width += event.movementX;
   }
   /** @type {(event:MouseEvent)=>void}*/
@@ -59,21 +85,31 @@
       event.preventDefault();
       return;
     }
+    if (onHorizontalResize) {
+      onHorizontalResize(event);
+    }
+
     position.x += event.movementX;
     width -= event.movementX;
   }
+  // TODO: complete function for top resize
   /** @type {(event:MouseEvent)=>void}*/
   function onTopResize(event) {}
   /** @type {(event:MouseEvent)=>void}*/
   function onBottomResize(event) {
     if (
-      (height >= maxHeight && event.movementY > 0) ||
-      (0 >= height && event.movementY > 0)
+      (event.view &&
+        (height >= maxHeight || height >= event.view?.window.innerHeight / 2) &&
+        event.movementY > 0) ||
+      (minHeight >= height && event.movementY < 0)
     ) {
       event.preventDefault();
       return;
     }
-    height = event.movementY;
+    if (onVerticalResize) {
+      onVerticalResize(event);
+    }
+    height += event.movementY;
   }
   /** @type {(event:MouseEvent)=>void}*/
   function onMoveComponent(event) {
@@ -98,7 +134,7 @@
       if (resizableTop || resizableVertical)
         event.view?.removeEventListener("mousemove", onTopResize);
       if (resizableBottom || resizableVertical)
-        event.view?.removeEventListener("mousemove", onLeftResize);
+        event.view?.removeEventListener("mousemove", onBottomResize);
       mousePressed = false;
       event.view?.removeEventListener("mouseup", onResizeEnd);
     }
@@ -146,9 +182,9 @@
   bind:this={containerRef}
   role="none"
   class="resizable-container"
-  style="width:{width ? width + 'px' : initialWidth};height:{height
+  style="width:{width !== 0 ? width + 'px' : 'inherit'};height:{height !== 0
     ? height + 'px'
-    : 'inherit'} ; top:{position.y}px; left:{position.x}px"
+    : 'auto'} ; top:{position.y}px; left:{position.x}px"
 >
   <div>
     {#if resizableVertical || resizableTop}
@@ -163,7 +199,7 @@
         role="none"
         on:mousedown={onMouseDownResizeBottom}
         class="resizable-bottom"
-        style="top:{height ? height - 8 + 'px' : '0'};"
+        style="top:{height ? height - 12 + 'px' : '0'};"
       />
     {/if}
     {#if resizableHorizontal || resizableLeft}
@@ -182,10 +218,10 @@
       />
     {/if}
     <div
-      style="width:{width ? width + 'px' : initialWidth};height:{height
-        ? height - 10 + 'px'
-        : 'inherit'}; {draggable
-        ? 'border: solid 5px transparent; cursor:auto;'
+      style="width:{width !== 0 ? width + 'px' : 'inherit'};height:{height !== 0
+        ? height + 'px'
+        : 'auto'}; {draggable
+        ? 'border: solid 5px transparent; cursor:move;'
         : ''};"
       role="none"
       on:mousedown={onMouseDownMoving}
@@ -219,7 +255,6 @@
     width: inherit;
     max-width: 100vw;
     height: inherit;
-    cursor: move;
     > * {
       cursor: auto;
     }
@@ -273,7 +308,7 @@
     z-index: 10;
   }
   .resizable-bottom {
-    background: red;
+    background: transparent;
     width: 100%;
     height: 10px;
     position: absolute;

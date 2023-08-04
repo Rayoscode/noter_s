@@ -1,7 +1,9 @@
 <script>
+  import BannerBackground from "$lib/components/Banner/BannerBackground/BannerBackground.svelte";
   import { fade } from "svelte/transition";
-  import BannerEditOptions from "$lib/components/NoterBoard/BoardHeader/BannerEditOptions/BannerEditOptions.svelte";
-  import ResizableAndDraggable from "$lib/components/ResizableAndDraggable/ResizableAndDraggable.svelte";
+  import BannerEditOptions from "$lib/components/Banner/BannerEditOptions/BannerEditOptions.svelte";
+  import ResizableAndDraggableItem from "$lib/components/ResizableAndDraggable/ResizableAndDraggableItem/ResizableAndDraggableItem.svelte";
+  import ResizableAndDraggableContainer from "$lib/components/ResizableAndDraggable/ResizableAndDraggableContainer/ResizableAndDraggableContainer.svelte";
   //  Mock Data
   let headerData = {
     projectName: "Proyectos 1",
@@ -10,79 +12,90 @@
       backgroundUrl: "url(https://wallpaperaccess.com/full/3497712.jpg)",
       backgroundPosition: "center",
     },
-    headerHeight: 300,
-    headerMinHeight: 200,
+    initialHeight: 300,
+  };
+
+  let headerHeight = headerData.initialHeight;
+  /** @type {(newHeaderValue:number)=>void} */
+  const setHeaderHeight = (newHeaderValue) => {
+    headerHeight = newHeaderValue;
+  };
+
+  /** @type {(event:MouseEvent)=>void}*/
+  const onVerticalResize = (event) => {
+    setHeaderHeight(headerHeight + event.movementY);
   };
   // TODO: Cropping operation for bg img with background-position
 
-  // let bannerSizes = { height: 150, width: 400 };
   let bannerOptionsVisible = false;
   /** @type {(event:MouseEvent)=>void}*/
   function stopDragging(event) {
     event.stopPropagation();
     return;
   }
-  let initialWidthBackground = "100%";
 </script>
 
-<header>
-  <div
-    class="background-header"
-    style="min-height: {headerData.headerMinHeight}px; height:{headerData.headerHeight}px;"
-  >
-    {#if headerData.imageCSSProps.backgroundUrl !== ""}
-      <ResizableAndDraggable
-        initialWidth={initialWidthBackground}
-        resizableBottom={true}
-      >
-        <div
-          style="background: {headerData.imageCSSProps.backgroundUrl};
-    height:{headerData.headerHeight}px;
-    background-position:{headerData.imageCSSProps.backgroundPosition};
-    background-size:cover"
-        />
-      </ResizableAndDraggable>
-    {/if}
-  </div>
-
-  <ResizableAndDraggable position={{ x: 60, y: 60 }} resizableHorizontal={true}>
-    <div
-      on:mouseenter={() => {
-        bannerOptionsVisible = true;
-      }}
-      on:mouseleave={() => {
-        bannerOptionsVisible = false;
-      }}
-      role="banner"
-      class="title-banner"
+<header style="height: {headerHeight}px;">
+  <ResizableAndDraggableContainer height={"100%"} width={"100%"}>
+    <ResizableAndDraggableItem
+      draggable={false}
+      initialHeight={headerData.initialHeight}
+      resizableBottom={true}
+      {onVerticalResize}
     >
-      <div>
-        {#if bannerOptionsVisible}
-          <div
-            on:mousedown={stopDragging}
-            role="none"
-            in:fade={{ duration: 200, delay: 100 }}
-            out:fade={{ duration: 200, delay: 100 }}
-            class="option-banner-container"
-          >
-            <BannerEditOptions />
+      <BannerBackground
+        initialHeight={headerData.initialHeight}
+        backgroundPosition={headerData.imageCSSProps.backgroundUrl}
+        backgroundUrl={headerData.imageCSSProps.backgroundUrl}
+      />
+    </ResizableAndDraggableItem>
+    <ResizableAndDraggableItem
+      draggable={true}
+      initialWidth={300}
+      position={{ x: 60, y: 60 }}
+      resizableHorizontal={true}
+    >
+      <div
+        on:mouseenter={() => {
+          bannerOptionsVisible = true;
+        }}
+        on:mouseleave={() => {
+          bannerOptionsVisible = false;
+        }}
+        role="banner"
+        class="title-banner"
+      >
+        <div>
+          {#if bannerOptionsVisible}
+            <div
+              on:mousedown={stopDragging}
+              role="none"
+              in:fade={{ duration: 200, delay: 100 }}
+              out:fade={{ duration: 200, delay: 100 }}
+              class="option-banner-container"
+            >
+              <BannerEditOptions />
+            </div>
+          {/if}
+          <div class="title-container">
+            <input
+              on:mousedown={stopDragging}
+              type="text"
+              value={headerData.projectName}
+            />
           </div>
-        {/if}
-        <div class="title-container">
-          <input
-            on:mousedown={stopDragging}
-            type="text"
-            value={headerData.projectName}
-          />
         </div>
       </div>
-    </div>
-  </ResizableAndDraggable>
+    </ResizableAndDraggableItem>
+  </ResizableAndDraggableContainer>
 </header>
 
 <style lang="scss">
   header {
     width: 100%;
+    display: flex;
+    height: auto;
+    position: relative;
   }
   .title-container {
     display: flex;
@@ -108,6 +121,7 @@
     background: rgba(98, 98, 98, 0.4);
     backdrop-filter: blur(4.5px);
     width: 100%;
+
     display: inline-block;
     > div {
       position: relative;
@@ -121,13 +135,6 @@
         left: 0;
         color: white;
       }
-    }
-  }
-  .background-header {
-    width: 100%;
-    max-height: 700px;
-    > div {
-      width: 100%;
     }
   }
 </style>
