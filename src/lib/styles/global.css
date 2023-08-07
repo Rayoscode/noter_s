@@ -1,9 +1,13 @@
 @layer dark-theme {
-
   :root {
     --black-100: #121212;
     --black-200: #212121;
   }
 }
 
-@layer light-theme {}
+@layer light-theme {
+}
+
+div[data-collision="true"] {
+  background-color: rgba(240, 255, 255, 0.2);
+}

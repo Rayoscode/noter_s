@@ -2,7 +2,8 @@
   import BannerBackground from "$lib/components/Banner/BannerBackground/BannerBackground.svelte";
   import { fade } from "svelte/transition";
   import BannerEditOptions from "$lib/components/Banner/BannerEditOptions/BannerEditOptions.svelte";
-  import BottomResizer from "$lib/components/Resizer/BottomResizer/BottomResizer.svelte";
+  import GridContainer from "$lib/components/Grid/GridContainer/GridContainer.svelte";
+  import GridItem from "$lib/components/Grid/GridItem/GridItem.svelte";
   //  Mock Data
   let headerData = {
     projectName: "Proyectos 1",
@@ -23,47 +24,68 @@
 </script>
 
 <header style="height: {headerHeight}px;">
-  <BannerBackground
-    initialHeight={headerData.initialHeight}
-    backgroundPosition={headerData.imageCSSProps.backgroundUrl}
-    backgroundUrl={headerData.imageCSSProps.backgroundUrl}
-  />
-  <div
-    on:mouseenter={() => {
-      bannerOptionsVisible = true;
-    }}
-    on:mouseleave={() => {
-      bannerOptionsVisible = false;
-    }}
-    role="banner"
-    class="title-banner"
+  <GridContainer
+    gridTemplateColumnsValue={"repeat(4, 1fr)"}
+    gridTemplateRowsValue={"repeat(5, 1fr)"}
+    rowLength={5}
+    colLength={4}
   >
-    <div>
-      {#if bannerOptionsVisible}
-        <div
-          role="none"
-          in:fade={{ duration: 200, delay: 100 }}
-          out:fade={{ duration: 200, delay: 100 }}
-          class="option-banner-container"
-        >
-          <BannerEditOptions />
+    <GridItem
+      draggable={false}
+      gridColStart={1}
+      gridColEnd={5}
+      gridRowStart={1}
+      gridRowEnd={5}
+      zIndex={9}
+    >
+      <BannerBackground
+        height={headerData.initialHeight}
+        onChangeHeight={changeHeaderHeight}
+        backgroundPosition={headerData.imageCSSProps.backgroundUrl}
+        backgroundUrl={headerData.imageCSSProps.backgroundUrl}
+      />
+    </GridItem>
+    <GridItem
+      draggable={true}
+      bgOnCollision
+      gridColStart={2}
+      gridColEnd={3}
+      gridRowEnd={3}
+      gridRowStart={2}
+    >
+      <div
+        on:mouseenter={() => {
+          bannerOptionsVisible = true;
+        }}
+        on:mouseleave={() => {
+          bannerOptionsVisible = false;
+        }}
+        role="banner"
+        class="title-banner"
+      >
+        <div>
+          {#if bannerOptionsVisible}
+            <div
+              role="none"
+              in:fade={{ duration: 200, delay: 100 }}
+              out:fade={{ duration: 200, delay: 100 }}
+              class="option-banner-container"
+            >
+              <BannerEditOptions />
+            </div>
+          {/if}
+          <div class="title-container">
+            <input type="text" value={headerData.projectName} />
+          </div>
         </div>
-      {/if}
-      <div class="title-container">
-        <input type="text" value={headerData.projectName} />
       </div>
-    </div>
-  </div>
-  <BottomResizer height={300} onChangeHeight={changeHeaderHeight} />
+    </GridItem>
+  </GridContainer>
 </header>
 
 <style lang="scss">
   header {
     width: 100%;
-    display: grid;
-    grid-template-rows: repeat(4, 1fr);
-    grid-template-columns: repeat(3, 1fr);
-
     height: auto;
     position: relative;
   }

@@ -2,6 +2,11 @@
   /** @type {(value:number)=>void}*/
   export let onChangeHeight;
   export let height = 0;
+  /** @type {number | undefined}*/
+  export let positionY = undefined;
+  export let resizeLeft = true;
+  /** @type {((value?:number)=>void) | undefined}*/
+  export let setPositionY = undefined;
   let maxHeight = 1000;
   let minHeight = 60;
   let mousePressed = false;
@@ -27,6 +32,9 @@
 
     height += event.movementY;
     onChangeHeight(height);
+    if (positionY && setPositionY) {
+      setPositionY();
+    }
   }
   /** @type {(event:MouseEvent)=>void}*/
   function onResizeEnd(event) {
@@ -38,15 +46,17 @@
   }
 </script>
 
-<div
-  on:mousedown={onMouseDownResizeBottom}
-  role="none"
-  style="top:{height - 5}px;"
-/>
+{#if resizeLeft}
+  <div
+    on:mousedown={onMouseDownResizeBottom}
+    role="none"
+    style="top:{positionY ? positionY - 5 : height - 5}px;"
+  />
+{/if}
 
 <style>
   div {
-    z-index: 10;
+    z-index: 90;
     cursor: ns-resize;
     height: 10px;
     position: absolute;
