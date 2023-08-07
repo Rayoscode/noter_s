@@ -33,30 +33,31 @@
   function checkForColliders() {
     const elementBounds = componentRef.getBoundingClientRect();
     const componentOffSetTop = elementBounds.height + elementBounds.bottom;
+    const componentOffsetBottom = elementBounds.height + elementBounds.top;
     const componentOffSetRight = elementBounds.left + elementBounds.width;
     const componentOffSetLeft = elementBounds.right + elementBounds.width;
-    const componentOffsetBottom = elementBounds.height + elementBounds.top;
     if (componentRef.parentElement) {
       for (const children of componentRef.parentElement.children) {
         const childBounds = children.getBoundingClientRect();
         const gridComponentOffsetBottom = childBounds.height + childBounds.top;
+        const gridComponentOffsetTop = childBounds.height + childBounds.bottom;
         const gridComponentOffsetRight = childBounds.width + childBounds.left;
-        const gridComponentOffsetLeft =
-          elementBounds.width + elementBounds.right;
-        const gridComponentOffsetTop =
-          elementBounds.height + elementBounds.bottom;
+        const gridComponentOffsetLeft = childBounds.width + childBounds.right;
+        console.log();
         if (
-          (componentOffSetTop <= gridComponentOffsetTop &&
-            componentOffSetTop > gridComponentOffsetBottom) ||
-          (componentOffsetBottom < gridComponentOffsetTop &&
-            componentOffsetBottom > gridComponentOffsetBottom) ||
-          (componentOffSetLeft < gridComponentOffsetRight &&
+          componentRef !== children &&
+          ((componentOffSetTop <= gridComponentOffsetTop &&
+            componentOffSetTop >= gridComponentOffsetBottom &&
+            componentOffSetLeft < gridComponentOffsetRight &&
             componentOffSetLeft > gridComponentOffsetLeft) ||
-          (componentOffSetRight < gridComponentOffsetRight &&
-            componentOffSetRight > gridComponentOffsetLeft)
+            (componentOffsetBottom < gridComponentOffsetTop &&
+              componentOffsetBottom > gridComponentOffsetBottom &&
+              ((componentOffSetLeft < gridComponentOffsetRight &&
+                componentOffSetLeft > gridComponentOffsetLeft) ||
+                (componentOffSetRight < gridComponentOffsetRight &&
+                  componentOffSetRight > gridComponentOffsetLeft))))
         ) {
           children.dataset.collision = "true";
-          console.log(children.dataset);
         } else {
           delete children.dataset.collision;
         }
