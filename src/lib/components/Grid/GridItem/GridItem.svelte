@@ -53,13 +53,11 @@
 
   function checkForColliders() {
     const elementBounds = componentRef.getBoundingClientRect();
-    let i = 0;
+
     if (componentRef.parentElement) {
       for (const children of componentRef.parentElement.children) {
         const childBounds = children.getBoundingClientRect();
 
-        if (i === 7) {
-        }
         if (
           children !== componentRef &&
           validateVerticalBoundsBounds(elementBounds, childBounds) &&
@@ -69,7 +67,6 @@
         } else {
           delete children.dataset.collision;
         }
-        i++;
       }
     }
   }
@@ -112,20 +109,14 @@
     if (!componentRef.parentElement) return;
     event.view?.window.removeEventListener("mousemove", onMouseMove);
     event.view?.window.removeEventListener("mouseup", onEndDrag);
-    const rowValues = [];
-    const colValues = [];
 
     for (const child of componentRef.parentElement.children) {
       if (child.dataset.collision && child.dataset.collision === true) {
-        rowValues.push(dataset["row-index"]);
-        colValues.push(dataset["column-index"]);
       } else {
         delete child.dataset.collision;
       }
     }
-    rowValues.forEach((value) => {
-      value;
-    });
+
     if (!collisionOnEndDraggingEvent) {
       position.set(originalPosition).then(() => {
         dragged = false;
