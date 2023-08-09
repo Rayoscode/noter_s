@@ -112,7 +112,8 @@
     border-radius: 8px;
     background: rgba(98, 98, 98, 0.4);
     backdrop-filter: blur(4.5px);
-    width: 100%;
+    width: 300px;
+    height: 60px;
     transition: all 0.5s ease-out;
 
     display: inline-block;

@@ -16,7 +16,7 @@
         style="grid-row-start:{i + 1}; grid-row-end:{i +
           2};grid-column-start:{j + 1};grid-column-end:{j + 2}"
         data-row-index={i}
-        data-row-column={j}
+        data-column-index={j}
       />
     {/each}
   {/each}
@@ -33,6 +33,7 @@
 
   .grid-container > div {
     border-radius: 8px;
+    transition: all 0.3s ease-in-out;
     z-index: 10;
     margin: 1px;
   }

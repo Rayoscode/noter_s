@@ -9,7 +9,7 @@
   export let bgOnCollision = false;
   export let zIndex = 10;
   let dragged = false;
-  /** @type {HTMLDivElement} */
+  /** @type {HTMLElement} */
   let componentRef;
   let position = spring({ x: 0, y: 0 }, { damping: 1 });
   let styleMoving = "";
@@ -27,39 +27,49 @@
       }, delay);
     };
   }
+  /** @type {(elementBoundsDragged:DOMRect,elementBoundsStatic:DOMRect)=> boolean} */
+  function validateHorizontalBounds(elementBoundsDragged, elementBoundsStatic) {
+    return (
+      (elementBoundsDragged.right > elementBoundsStatic.left &&
+        elementBoundsDragged.right <= elementBoundsStatic.right) ||
+      (elementBoundsDragged.left > elementBoundsStatic.left &&
+        elementBoundsDragged.left <= elementBoundsStatic.right)
+    );
+  }
+  /** @type {(elementBoundsDragged:DOMRect,elementBoundsStatic:DOMRect)=> boolean} */
+  function validateVerticalBoundsBounds(
+    elementBoundsDragged,
+    elementBoundsStatic
+  ) {
+    return (
+      (elementBoundsStatic.top <= elementBoundsDragged.top &&
+        elementBoundsDragged.top <= elementBoundsStatic.bottom) ||
+      (elementBoundsDragged.bottom < elementBoundsStatic.bottom &&
+        elementBoundsDragged.bottom > elementBoundsStatic.top)
+    );
+  }
 
-  const debouncendCheckingColliders = debounce(checkForColliders, 100);
+  const debouncendCheckingColliders = debounce(checkForColliders, 10);
 
   function checkForColliders() {
     const elementBounds = componentRef.getBoundingClientRect();
-    const componentOffSetTop = elementBounds.height + elementBounds.bottom;
-    const componentOffSetRight = elementBounds.left + elementBounds.width;
-    const componentOffSetLeft = elementBounds.right + elementBounds.width;
-    const componentOffsetBottom = elementBounds.height + elementBounds.top;
+    let i = 0;
     if (componentRef.parentElement) {
       for (const children of componentRef.parentElement.children) {
         const childBounds = children.getBoundingClientRect();
-        const gridComponentOffsetBottom = childBounds.height + childBounds.top;
-        const gridComponentOffsetRight = childBounds.width + childBounds.left;
-        const gridComponentOffsetLeft =
-          elementBounds.width + elementBounds.right;
-        const gridComponentOffsetTop =
-          elementBounds.height + elementBounds.bottom;
+
+        if (i === 7) {
+        }
         if (
-          (componentOffSetTop <= gridComponentOffsetTop &&
-            componentOffSetTop > gridComponentOffsetBottom) ||
-          (componentOffsetBottom < gridComponentOffsetTop &&
-            componentOffsetBottom > gridComponentOffsetBottom) ||
-          (componentOffSetLeft < gridComponentOffsetRight &&
-            componentOffSetLeft > gridComponentOffsetLeft) ||
-          (componentOffSetRight < gridComponentOffsetRight &&
-            componentOffSetRight > gridComponentOffsetLeft)
+          children !== componentRef &&
+          validateVerticalBoundsBounds(elementBounds, childBounds) &&
+          validateHorizontalBounds(elementBounds, childBounds)
         ) {
           children.dataset.collision = "true";
-          console.log(children.dataset);
         } else {
           delete children.dataset.collision;
         }
+        i++;
       }
     }
   }
@@ -99,8 +109,23 @@
   }
   /** @type {(event:MouseEvent)=>void} */
   function onEndDrag(event) {
+    if (!componentRef.parentElement) return;
     event.view?.window.removeEventListener("mousemove", onMouseMove);
     event.view?.window.removeEventListener("mouseup", onEndDrag);
+    const rowValues = [];
+    const colValues = [];
+
+    for (const child of componentRef.parentElement.children) {
+      if (child.dataset.collision && child.dataset.collision === true) {
+        rowValues.push(dataset["row-index"]);
+        colValues.push(dataset["column-index"]);
+      } else {
+        delete child.dataset.collision;
+      }
+    }
+    rowValues.forEach((value) => {
+      value;
+    });
     if (!collisionOnEndDraggingEvent) {
       position.set(originalPosition).then(() => {
         dragged = false;
