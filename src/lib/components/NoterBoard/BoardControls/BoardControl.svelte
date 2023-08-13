@@ -30,6 +30,8 @@
     position: fixed;
     padding: 10px 20px 10px 10px;
     background: rgba(98, 98, 98, 0.4);
+    /* background-color: var(--floating-component-bg-color); */
+    background-color: var(--floating-component-bg-color);
     backdrop-filter: blur(4.5px);
   }
 </style>

@@ -12,12 +12,14 @@
 >
   {#each Array(rowLength) as row, i}
     {#each Array(colLength) as col, j}
-      <div
-        style="grid-row-start:{i + 1}; grid-row-end:{i +
-          2};grid-column-start:{j + 1};grid-column-end:{j + 2}"
-        data-row-index={i}
-        data-column-index={j}
-      />
+      {#if col !== 0}
+        <div
+          style="grid-row-start:{i + 1}; grid-row-end:{i +
+            2};grid-column-start:{j + 1};grid-column-end:{j + 2}"
+          data-row-index={i}
+          data-column-index={j}
+        />
+      {/if}
     {/each}
   {/each}
   <slot />
@@ -29,6 +31,7 @@
     width: inherit;
     height: inherit;
     isolation: isolate;
+    /* align-items: center; */
   }
 
   .grid-container > div {

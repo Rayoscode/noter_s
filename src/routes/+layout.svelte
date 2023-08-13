@@ -1,5 +1,6 @@
 <script lang="ts">
   import "$lib/styles/global.css";
+  import { onMount } from "svelte";
 </script>
 
 <slot />

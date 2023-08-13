@@ -8,6 +8,7 @@
   export let gridRowEnd = 0;
   export let bgOnCollision = false;
   export let zIndex = 10;
+  export let style = "";
   let dragged = false;
   /** @type {HTMLElement} */
   let componentRef;
@@ -15,6 +16,7 @@
   let styleMoving = "";
   let collisionOnEndDraggingEvent = false;
   let originalPosition = { x: 0, y: 0 };
+  let collisionMatrix = undefined;
 
   function debounce(func, delay) {
     let timeoutId;
@@ -77,6 +79,7 @@
       y: parseInt(rect.y.toFixed()),
       x: parseInt(rect.x.toFixed()),
     });
+    collisionMatrix = new Array();
   });
 
   /** @type {(event:MouseEvent)=>void} */
@@ -112,6 +115,7 @@
 
     for (const child of componentRef.parentElement.children) {
       if (child.dataset.collision && child.dataset.collision === true) {
+        delete child.dataset.collision;
       } else {
         delete child.dataset.collision;
       }
@@ -128,7 +132,7 @@
 <div
   style="grid-column-start: {gridColStart}; grid-column-end:{gridColEnd}; grid-row-start:{gridRowStart}; grid-row-end:{gridRowEnd}; top:{$position.y}px ; left:{$position.x}px; z-index:{zIndex} ;  position:{dragged
     ? 'absolute'
-    : 'static'} "
+    : 'static'}; {style} "
   on:mousedown={onMouseDownDrag}
   role="none"
   bind:this={componentRef}

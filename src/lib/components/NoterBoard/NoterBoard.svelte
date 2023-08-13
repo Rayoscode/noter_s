@@ -8,14 +8,85 @@
   import DownArrow from "$lib/assets/Icons/DownArrow.svelte";
   import RightArrow from "$lib/assets/Icons/RightArrow.svelte";
   import CommandSelector from "../CommandSelector/CommandSelector.svelte";
-  let commands = ["Bold", "Italic", "Code"];
+  import ContentRenderer from "../ContentRenderer/ContentRenderer.svelte";
+
+  const commands = [
+    { description: "Bold", id: "1" },
+    { description: "Italic", id: "2" },
+    { description: "Code", id: "3" },
+  ];
+
+  let filteredCommands = commands;
+  let showCommandSelector = false;
+  let commandInput = "";
+  let selected = 1;
+  let commandPosition = { x: 0, y: 0 };
   function onSelectedCommand() {}
+  /** @type {(event:KeyboardEvent)=>void} */
+  function keyPressHandler(event) {
+    if (showCommandSelector) {
+      commandInput += event.key;
+      filteredCommands = filterCommandsByInput(commandInput);
+    }
+    if (!showCommandSelector && event.key === "/") {
+      showCommandSelector = true;
+      commandInput = "";
+      filteredCommands = commands;
+      let range = getSelection()?.getRangeAt(0).cloneRange();
+      range?.collapse(true);
+      let cursorRects = range?.getClientRects()[0];
+      if (cursorRects) {
+        let fontSize = window
+          .getComputedStyle(range?.startContainer.parentElement, null)
+          .getPropertyValue("font-size");
+        commandPosition = {
+          x: cursorRects.x,
+          y: cursorRects.y + parseFloat(fontSize) + 10,
+        };
+      } else if (range?.startContainer.nodeType === 1) {
+        let fontSize = window
+          .getComputedStyle(range.startContainer, null)
+          .getPropertyValue("font-size");
+        commandPosition = {
+          x: range.startContainer.offsetLeft,
+          y: range.startContainer.offsetTop + parseFloat(fontSize) + 10,
+        };
+      }
+    }
+  }
+  /** @type {(event:KeyboardEvent)=>void} */
+  function keyDownHandler(event) {
+    if (
+      showCommandSelector &&
+      (event.key === "Escape" ||
+        filteredCommands.length === 0 ||
+        (event.key === "Backspace" && commandInput.length === 0))
+    ) {
+      showCommandSelector = false;
+    }
+    if (showCommandSelector && event.key === "Backspace") {
+      commandInput = commandInput.substring(0, commandInput.length - 1);
+      filteredCommands = filterCommandsByInput(commandInput);
+    }
+  }
+  /** @type {(input:string)=>{description:string,id:string}[]}*/
+  function filterCommandsByInput(input) {
+    input = input.toUpperCase();
+    /** @type {{description:string,id:string}[]}*/
+    const filtered = [];
+    commands.forEach((command) => {
+      if (command.description.toUpperCase().includes(input)) {
+        filtered.push(command);
+      }
+    });
+    return filtered;
+  }
 </script>
 
 <main class="board-container">
   <BoardHeader />
   <section>
-    <div contenteditable="true" />
+    <ContentRenderer {keyDownHandler} {keyPressHandler} />
   </section>
   <BoardControl position="top-left">
     <div class="control-board-container">
@@ -36,9 +107,10 @@
     </div>
   </BoardControl>
   <CommandSelector
-    {commands}
+    commands={filteredCommands}
     onSelectCommand={onSelectedCommand}
-    position={{ x: 400, y: 400 }}
+    {showCommandSelector}
+    position={commandPosition}
   />
 </main>
 
@@ -53,27 +125,14 @@
   .board-container {
     background: #212121;
     box-sizing: border-box;
-    width: 100vw;
+    width: 100%;
     height: auto;
+    // TODO: Cambiar cuando se setea todo bien el size del content editable
     min-height: 100vh;
     section {
       width: 100%;
       height: inherit;
       display: flex;
-    }
-  }
-  [contenteditable="true"] {
-    word-break: break-all;
-    padding: 5px 5px 0 5px;
-    background: #212121;
-    height: auto;
-    width: 90%;
-    min-height: 100%;
-    outline: none;
-    caret-color: white;
-    color: white;
-    &:focus {
-      outline: none;
     }
   }
 </style>
