@@ -9,29 +9,57 @@
   import RightArrow from "$lib/assets/Icons/RightArrow.svelte";
   import CommandSelector from "../CommandSelector/CommandSelector.svelte";
   import ContentRenderer from "../ContentRenderer/ContentRenderer.svelte";
-
-  const commands = [
-    { description: "Bold", id: "1" },
-    { description: "Italic", id: "2" },
-    { description: "Code", id: "3" },
-  ];
-
+  import commands from "$lib/drivers/Entities/Commands/Commands";
+  import { Command } from "$lib/drivers/Entities/Command/Command";
+  import { commandRenderer } from "$lib/drivers/renderer/CommandRenderer";
   let filteredCommands = commands;
   let showCommandSelector = false;
+  /** @type {(value:boolean)=>void}*/
+  let changeShowCommandSelector = (value) => {
+    showCommandSelector = value;
+  };
   let commandInput = "";
-  let selected = 1;
+  /** @type {string | undefined}*/
+  let selected = undefined;
+  /**
+   * @type {(newSelected:string | undefined)=>void}
+   */
+  function changeSelected(newSelecteded) {
+    selected = newSelecteded;
+  }
   let commandPosition = { x: 0, y: 0 };
-  function onSelectedCommand() {}
+  /** @type {(commandId:string | undefined)=>void}*/
+  function onSelectedCommand(commandId) {
+    if (commandId) {
+      let elementToRender = commandRenderer(
+        commands.find((command) => {
+          command.id === commandId;
+        })
+      );
+      console.log(elementToRender);
+      if (elementToRender instanceof HTMLElement) {
+        getSelection()?.focusNode?.insertBefore(elementToRender, null);
+      }
+    } else {
+      let range = getSelection()?.getRangeAt(0);
+      getSelection()?.removeAllRanges();
+      getSelection()?.addRange(range);
+    }
+  }
   /** @type {(event:KeyboardEvent)=>void} */
   function keyPressHandler(event) {
     if (showCommandSelector) {
       commandInput += event.key;
       filteredCommands = filterCommandsByInput(commandInput);
+      if (filteredCommands.length < 0) {
+        showCommandSelector = false;
+      }
     }
     if (!showCommandSelector && event.key === "/") {
       showCommandSelector = true;
       commandInput = "";
       filteredCommands = commands;
+      changeSelected(filteredCommands[0].id);
       let range = getSelection()?.getRangeAt(0).cloneRange();
       range?.collapse(true);
       let cursorRects = range?.getClientRects()[0];
@@ -56,26 +84,31 @@
   }
   /** @type {(event:KeyboardEvent)=>void} */
   function keyDownHandler(event) {
-    if (
-      showCommandSelector &&
-      (event.key === "Escape" ||
-        filteredCommands.length === 0 ||
-        (event.key === "Backspace" && commandInput.length === 0))
-    ) {
-      showCommandSelector = false;
-    }
     if (showCommandSelector && event.key === "Backspace") {
       commandInput = commandInput.substring(0, commandInput.length - 1);
       filteredCommands = filterCommandsByInput(commandInput);
     }
+    if (showCommandSelector && event.key === "ArrowDown") {
+      console.log(document.getElementById(selected)?.firstChild);
+      document.getElementById(selected)?.firstChild.focus();
+    }
+    if (
+      showCommandSelector &&
+      (event.key === "Escape" ||
+        filteredCommands.length === 0 ||
+        (event.key === "Backspace" && commandInput.length <= 0) ||
+        event.key === "ArrowUp")
+    ) {
+      showCommandSelector = false;
+    }
   }
-  /** @type {(input:string)=>{description:string,id:string}[]}*/
+  /** @type {(input:string)=>Command[]}*/
   function filterCommandsByInput(input) {
     input = input.toUpperCase();
-    /** @type {{description:string,id:string}[]}*/
+    /** @type {Command[]}*/
     const filtered = [];
     commands.forEach((command) => {
-      if (command.description.toUpperCase().includes(input)) {
+      if (command.name.toUpperCase().includes(input)) {
         filtered.push(command);
       }
     });
@@ -107,10 +140,13 @@
     </div>
   </BoardControl>
   <CommandSelector
+    {selected}
+    {changeSelected}
     commands={filteredCommands}
     onSelectCommand={onSelectedCommand}
     {showCommandSelector}
     position={commandPosition}
+    {changeShowCommandSelector}
   />
 </main>
 

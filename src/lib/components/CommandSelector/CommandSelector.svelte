@@ -1,16 +1,21 @@
 <script>
   import { onMount, afterUpdate } from "svelte";
   import { fade, fly } from "svelte/transition";
-  /** @type {object[]}  */
+  import { Command } from "$lib/drivers/Entities/Command/Command";
+  /** @type {Command[]}  */
   export let commands;
-  /** @type {(event:Event)=>void}  */
+  /** @type {(selected:string | undefined)=>void}  */
   export let onSelectCommand;
   /** @type {{ x:number,y:number} }  */
   export let position;
   export let showCommandSelector = false;
   let displayCommmandsSelector = false;
-  let selected = 1;
-  /** @type {HTMLDivElement}*/
+  /** @type {string | undefined}*/
+  export let selected;
+  /** @type {(newSelected:string | undefined)=>void} */
+  export let changeSelected;
+  /** @type {(value:boolean)=>void}*/
+  export let changeShowCommandSelector;
   onMount(() => {
     document.documentElement.style.setProperty(
       "--selector-top",
@@ -41,14 +46,54 @@
       }
     });
   });
+  /** @type {(event:KeyboardEvent)=>void} */
+  function onKeyDownHandle(event) {
+    console.log(event.key);
+    if (event.key === "ArrowDown") {
+      if (event.target.parentElement.nextSibling) {
+        event.target.parentElement.nextSibling.firstChild?.focus();
+      } else {
+        event.target.parentElement.parentElement.firstChild?.firstChild?.focus();
+      }
+    }
+    if (event.key === "ArrowUp") {
+      if (event.target?.parentElement.previousSibling) {
+        event.target.parentElement.previousSibling.firstChild?.focus();
+      } else {
+        changeSelected(undefined);
+      }
+    }
+    if (event.key === "Enter") {
+      onSelectCommand(selected);
+      changeShowCommandSelector(false);
+    }
+    if (event.key === "Escape") {
+      onSelectCommand(undefined);
+      changeShowCommandSelector(false);
+    }
+  }
 </script>
 
 {#if displayCommmandsSelector}
   <div in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
     <ul>
-      {#each commands as command}
-        <li in:fly={{ duration: 200 }} out:fly={{ duration: 200 }}>
-          <button on:click={onSelectCommand}>{command.description}</button>
+      {#each commands as command, index}
+        <li
+          id={command.id}
+          in:fly={{ duration: 200 }}
+          out:fly={{ duration: 200 }}
+        >
+          <button
+            on:focus={() => {
+              changeSelected(command.id);
+            }}
+            on:keydown={onKeyDownHandle}
+            role=""
+            on:click={() => {
+              selected = command.id;
+              onSelectCommand(selected);
+            }}>{command.name}</button
+          >
         </li>
       {/each}
     </ul>
@@ -66,6 +111,7 @@
     top: var(--selector-top);
     left: var(--selector-left);
     min-width: 200px;
+    min-height: 150px;
     height: auto;
     overflow-y: auto;
     border: var(--floating-componen-border);
@@ -93,6 +139,11 @@
         border: none;
         background: transparent;
         color: white;
+        &:focus {
+          outline: none;
+          border: none;
+          opacity: 0.5;
+        }
       }
       &:first-child > button {
         margin-top: 5px;

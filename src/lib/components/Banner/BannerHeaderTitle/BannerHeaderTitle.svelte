@@ -2,6 +2,7 @@
   import { fade } from "svelte/transition";
   import BannerEditOptions from "$lib/components/Banner/BannerEditOptions/BannerEditOptions.svelte";
   let bannerOptionsVisible = false;
+  export let typeBanner = "";
   export let title = "";
 </script>
 
