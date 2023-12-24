@@ -1,0 +1,105 @@
+:has([type='todo']) list-item {
+  list-style: none;
+}
+
+:host {
+  display: block;
+}
+
+[contenteditable='true'] {
+  &:focus-visible {
+    appearance: none;
+    outline: none;
+    /* border-radius: 8px;
+    border: solid gainsboro 2px; */
+  }
+}
+
+.component-container[contenteditable='true'] {
+  border-top: 2px solid transparent;
+  padding: 0.25rem;
+  /* border-radius: 8px; */
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: ghostwhite;
+  }
+
+  & > * {
+    margin: 1px;
+    padding: 1px;
+    background-color: transparent;
+
+    &:focus {
+      background-color: #222;
+    }
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin-left: 20px;
+}
+
+ul[type='todo'] {
+  list-style: none;
+
+  & li {
+    display: flex;
+    gap: 0.7rem;
+
+  }
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+.list-item {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  & div {
+    display: inline-block;
+    width: 100%;
+    cursor: text;
+
+    & p {
+      width: fit-content;
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      padding: 0 2px;
+    }
+  }
+
+  & input ~ div > p::before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 55%;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: white;
+  }
+
+  & input:checked ~ div > p::before {
+    width: 100%;
+  }
+}
+
+ol > .list-item {
+  display: list-item;
+}
