@@ -1,34 +1,47 @@
+import { isALineComponent } from "../Core/utils/selection";
 export const trigger: Record<string, any> = {
   beforeinput: [
     {
-      trigger: ( { ev }: { ev: InputEvent; } ) => {
-        return ev.inputType === 'insertText';
+      name: "textTrigger",
+      trigger: ({ ev }: { ev: InputEvent }) => {
+        return ev.inputType === "insertText";
       },
-      commandName: 'insertText',
+      commandName: "insertText",
     },
     {
-      trigger: ( { ev }: { ev: InputEvent; } ) => {
-        return ev.inputType === 'formatBold';
+      name: "boldTrigger",
+      trigger: ({ ev }: { ev: InputEvent }) => {
+        return ev.inputType === "formatBold";
       },
-      commandName: 'formatBold',
+      commandName: "formatBold",
     },
     {
-      trigger: ( { ev }: { ev: InputEvent; } ) => {
-        return ev.inputType === 'formatItalic';
+      name: "italicTrigger",
+      trigger: ({ ev }: { ev: InputEvent }) => {
+        return ev.inputType === "formatItalic";
       },
-      commandName: 'formatItalic',
+      commandName: "formatItalic",
     },
     {
-      trigger: ( { ev }: { ev: InputEvent; } ) => {
-        return ev.inputType === 'deleteContentBackward';
+      name: "deleteTrigger",
+      trigger: ({ ev }: { ev: InputEvent }) => {
+        return ev.inputType === "deleteContentBackward";
       },
-      commandName: 'deleteContentBackward',
+      commandName: "deleteContentBackward",
     },
     {
-      trigger: ( { ev }: { ev: InputEvent; } ) => {
-        return ev.inputType === 'insertParagraph';
+      name: "paragrahInsertionTrigger",
+      trigger: ({ ev, range }: { ev: InputEvent; range: Range }) => {
+        return ev.inputType === "insertParagraph" && isALineComponent(range);
       },
-      commandName: 'insertParagraph',
+      commandName: "insertParagraph",
     },
+    // {
+    //   name: "listItemInsertionTrigger",
+    //   trigger: ({ ev, range }: { ev: InputEvent; range: Range }) => {
+    //     return ev.inputType === "insertParagraph" && isOnList(range);
+    //   },
+    //   commandName: "insertListItem",
+    // },
   ],
 };

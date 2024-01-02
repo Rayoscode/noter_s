@@ -100,6 +100,6 @@ h1 {
   }
 }
 
-ol > .list-item {
+ol > .list-item, ul > .list-item {
   display: list-item;
 }

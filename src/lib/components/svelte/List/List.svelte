@@ -14,6 +14,7 @@
 <svelte:element
   this={type === "todo" ? "ul" : type}
   class={`list ${listType[type]} component`}
+  contenteditable="false"
   bind:this={ref}
 >
   <ListItem {type}></ListItem>

@@ -1,9 +1,7 @@
 <script>
   import { onMount } from "svelte";
 
-  /**
-   * @type {DocumentFragement | string} content
-   */
+  /** @type { DocumentFragment | string } content */
   export let content;
 
   /**
@@ -11,7 +9,7 @@
    */
   let lineRef;
   onMount(() => {
-    if (content) {
+    if (content && content.hasChildNodes()) {
       lineRef.append(content);
     } else {
       lineRef.innerHTML = "<br>";
