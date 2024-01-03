@@ -47,10 +47,6 @@ export class ContentManager {
   ): { component: SvelteComponent; element: DocumentFragment } {
     const Component = this.editor.getUIComponent(name) as SvelteComponent;
     let componentInstance;
-    console.log(
-      !!Component,
-      this.svelteComponentCreationPortal.childElementCount
-    );
 
     if (
       Component &&

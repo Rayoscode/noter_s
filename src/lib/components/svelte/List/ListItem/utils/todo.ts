@@ -91,3 +91,10 @@ export function isAListOnAList(listItemElement: HTMLElement) {
     listItemElement.parentElement?.parentElement?.className.includes("list")
   );
 }
+export function isAListItem(range:Range){
+  return !!getClosestElementWithSelectorOnRange(range,'.list-item')
+}
+export function hasTextContent(range:Range){
+  console.log('textContentfunction',range)
+  return range.startContainer.textContent !== '' 
+}

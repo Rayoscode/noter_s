@@ -1,4 +1,5 @@
 import { isALineComponent } from "../Core/utils/selection";
+import { isAListItem,hasTextContent } from "../components/svelte/List/ListItem/utils/todo";
 export const trigger: Record<string, any> = {
   beforeinput: [
     {
@@ -35,6 +36,22 @@ export const trigger: Record<string, any> = {
         return ev.inputType === "insertParagraph" && isALineComponent(range);
       },
       commandName: "insertParagraph",
+    },
+    {
+      name:"endList",
+      trigger:({ev,range}:{ ev: InputEvent; range: Range }) => { 
+        return ev.inputType === 'insertParagraph' && isAListItem(range) && !hasTextContent(range)
+       },
+       commandName:'endCurrentList'
+
+    },
+    {
+      name:"listItemInsertion",
+      trigger:({ev,range}:{ ev: InputEvent; range: Range }) => { 
+        return ev.inputType === 'insertParagraph' && isAListItem(range) && hasTextContent(range)
+       },
+       commandName:'insertListItem'
+
     },
     // {
     //   name: "listItemInsertionTrigger",

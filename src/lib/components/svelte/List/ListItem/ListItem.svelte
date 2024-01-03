@@ -1,7 +1,6 @@
 <script>
-  import { onMount } from "svelte";
-  import { handleEndList, handleInsertListItem } from "./utils/todo";
-  import { editor } from "../../../../stores/EditorStore";
+  import { onMount } from 'svelte';
+  import { handleEndList, handleInsertListItem } from './utils/todo';
   export let type;
   let ref;
   let textContent;
@@ -9,48 +8,31 @@
     ref.props = { type };
   });
   /** @type {(ev:InputEvent) => void} */
-  function input(ev) {
-    if (ev.inputType === "insertParagraph") {
-      const editorInstance = editor.get();
-      if (textContent === "") {
-        // editor.get().executeCommand("insertTodoListItem", { ref });
-        editorInstance.executeCommand("endCurrentList", {
-          ref,
-          manager: editorInstance.lastFocus.manager,
-          range: editorInstance.lastFocus.range,
-        });
-      } else {
-        // handleInsertListItem()
-        editorInstance.executeCommand("insertListItem", {
-          ref,
-          manager: editorInstance.lastFocus.manager,
-          range: editorInstance.lastFocus.range,
-        });
-      }
-      ev.preventDefault();
-      ev.stopPropagation();
-    }
-    if (ev.inputType === "deleteContentBackward" && textContent === "") {
-    }
-  }
+  function input(ev) {}
 </script>
 
-{#if type === "todo"}
-  <li bind:this={ref} class="list-item component" contenteditable="false">
+{#if type === 'todo'}
+  <li
+    bind:this={ref}
+    class="list-item component"
+    contenteditable="false"
+  >
     <input type="checkbox" />
-    <div on:beforeinput={input}>
-      <span contenteditable="true" bind:textContent>{@html "<br>"}</span>
+    <div>
+      <span
+        contenteditable="true"
+        bind:textContent
+      >
+        {@html '<br>'}
+      </span>
     </div>
   </li>
 {:else}
   <li
     bind:this={ref}
-    contenteditable="true"
-    on:beforeinput={input}
-    bind:textContent
     class="list-item component"
   >
-    {@html "<br>"}
+    {@html '<br>'}
   </li>
 {/if}
 

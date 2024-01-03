@@ -1,20 +1,20 @@
 <script>
-  import { onMount } from "svelte";
-  import ListItem from "./ListItem/ListItem.svelte";
+  import { onMount } from 'svelte';
+  import ListItem from './ListItem/ListItem.svelte';
 
-  export let type = "ul";
+  export let type = 'ul';
   let ref;
 
   onMount(() => {
     ref.props = { type };
   });
-  const listType = { ul: "ordered", ol: "ordered", todo: "todo" };
+  const listType = { ul: 'ordered', ol: 'ordered', todo: 'todo' };
 </script>
 
 <svelte:element
-  this={type === "todo" ? "ul" : type}
+  this={type === 'todo' ? 'ul' : type}
   class={`list ${listType[type]} component`}
-  contenteditable="false"
+  contenteditable="true"
   bind:this={ref}
 >
   <ListItem {type}></ListItem>

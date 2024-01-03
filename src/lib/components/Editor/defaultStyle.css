@@ -101,5 +101,14 @@ h1 {
 }
 
 ol > .list-item, ul > .list-item {
-  display: list-item;
+  display: list-item ;
+}
+.list{
+  
+  margin-left: 15px !important;
+}
+
+.list.todo li {
+  display: flex;
+  flex-direction: row;
 }
