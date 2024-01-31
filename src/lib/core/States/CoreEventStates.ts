@@ -6,7 +6,7 @@ import {
 import { isALineComponentOnCaret } from '../utils/selection';
 
 export const BeforeInputStatesCallbacks = {
-	beforeInput: {
+	beforeinput: {
 		insertionText: ({ ev }: { ev: InputEvent }) => {
 			return ev.inputType === 'insertText';
 		},

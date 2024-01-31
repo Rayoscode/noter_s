@@ -32,18 +32,27 @@
 		caretRef.style.left = `${rect.x - preRef.getBoundingClientRect().left}px`;
 	};
 	const inputTextHandler = (ev: InputEvent) => {
+		ev.stopImmediatePropagation()
 		if (ev.target.outerText === '') {
 			ev.preventDefault();
 			return;
 		}
 		if (ev.inputType === 'insertText') {
-			document.execCommand('insertText', false, ev.data as string);
+			// document.execCommand('insertText', false, ev.data as string);
+			console.log(ev)
+			ev.preventDefault()
+			ev.stopImmediatePropagation()
+
 		}
 		if (ev.inputType === 'deleteContentBackward' && ev.target.outerText !== '') {
-			document.execCommand('delete');
+			// document.execCommand('delete');
+			ev.preventDefault();
+			return;
 		}
 		if (ev.inputType === 'insertParagraph') {
-			document.execCommand('insertParagraph');
+			// document.execCommand('insertParagraph');
+			ev.preventDefault();
+			return;
 		}
 		const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
 		preRef.innerHTML = result.value;
@@ -64,6 +73,18 @@
 		const result = hljs.highlight(preRef.outerText, { language: languageSelected });
 		preRef.innerHTML = result.value;
 	});
+	function keyDownHandler(event:InputEvent){
+		if(event.data === 'z' && event.ctrlKey){
+			document.execCommand('undo')
+			event.preventDefault()
+		}
+
+		if(event.data === 'y' && event.ctrlKey){
+			document.execCommand('redo')
+			event.preventDefault()
+		}
+		return
+	}
 </script>
 
 <div class="code-block" contenteditable="false" spellcheck="false">
@@ -72,6 +93,7 @@
 			on:input={inputTextHandler}
 			on:focusin={handleFocusIn}
 			on:focusout={handleFocusOut}
+			on:keydown={keyDownHandler}
 			class="text-code-area"
 			contenteditable="plaintext-only"
 			bind:textContent={content}></pre>

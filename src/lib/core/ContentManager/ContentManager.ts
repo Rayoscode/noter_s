@@ -5,7 +5,7 @@ import { events } from '../BasicEvents/basicEvents';
 import { ComponentManager, type HTMLElementWithNodeData } from '../ComponentManager/ComponentManager';
 import { EventManager } from '../EventManager/EventManager';
 import { getComponentContainerOnCaret, getComponentOnCaret } from '../utils/selection';
-
+import { BeforeInputStatesCallbacks } from '../States/CoreEventStates';
 export interface TriggerAction {
 	trigger: (args: Record<string, any>) => boolean;
 	commandName: string;
@@ -43,7 +43,7 @@ export class ContentManager {
 		this.contentContainer.contentManager = this
 		this.undoManager = new UndoManager(this.contentContainer, commands);
 		this.componentManager = new ComponentManager(editor);
-		this.eventManager = new EventManager(events, parentElement, this.editor, this);
+		this.eventManager = new EventManager(events, parentElement, this.editor, this,BeforeInputStatesCallbacks);
 		this.ast = { id: crypto.randomUUID(), type: 'lines-container', componentChildren: [] };
 		// @ts-expect-error Hay que cambiar por un interface que extienda el HTMLElement con la prop node
 		this.contentContainer.node = this.ast;
