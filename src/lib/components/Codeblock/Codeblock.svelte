@@ -2,7 +2,6 @@
 	import { afterUpdate, onMount } from 'svelte';
 	import hljs from 'highlight.js';
 	import Dropdown from '../Dropdown/Dropdown.svelte';
-	import type { FormEventHandler } from 'svelte/elements';
 	/** @type {HTMLElement}*/
 	let ref;
 	const languages = [
@@ -22,7 +21,7 @@
 		'ast'
 	];
 	let languageSelected = 'javascript';
-	let content = 'let p = 5';
+	let content = '';
 	let preRef: HTMLElement;
 	let caretRef: HTMLElement;
 	const handleSelectionChangeOfCaret = () => {
@@ -31,34 +30,37 @@
 		caretRef.style.top = `${rect?.y - preRef.getBoundingClientRect().top}px`;
 		caretRef.style.left = `${rect.x - preRef.getBoundingClientRect().left}px`;
 	};
-	const inputTextHandler = (ev: InputEvent) => {
-		ev.stopImmediatePropagation()
+	const handleBeforeInput = (ev:InputEvent) => {
 		if (ev.target.outerText === '') {
 			ev.preventDefault();
 			return;
 		}
-		if (ev.inputType === 'insertText') {
-			// document.execCommand('insertText', false, ev.data as string);
-			console.log(ev)
-			ev.preventDefault()
+		if(ev.inputType === 'insertText'){
+			document.execCommand('insertText',false,ev.data as string)
+			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
+			preRef.innerHTML = result.value;
 			ev.stopImmediatePropagation()
-
+			ev.preventDefault()
+			return
 		}
-		if (ev.inputType === 'deleteContentBackward' && ev.target.outerText !== '') {
-			// document.execCommand('delete');
-			ev.preventDefault();
-			return;
+		if(ev.inputType === 'insertLineBreak'){
+			document.execCommand('insertLineBreak')
+			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
+			preRef.innerHTML = result.value;
+			ev.stopImmediatePropagation()
+			ev.preventDefault()
+			return
 		}
-		if (ev.inputType === 'insertParagraph') {
-			// document.execCommand('insertParagraph');
-			ev.preventDefault();
-			return;
+		if(ev.inputType === 'deleteContentBackward'){
+			document.execCommand('delete')
+			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
+			preRef.innerHTML = result.value;
+			handleSelectionChangeOfCaret()
+			ev.stopPropagation()
+			ev.preventDefault()
+			return			
 		}
-		const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
-		preRef.innerHTML = result.value;
-		ev.preventDefault();
-		ev.stopPropagation();
-	};
+	}
 	const handleFocusIn = () => {
 		document.addEventListener('selectionchange', handleSelectionChangeOfCaret);
 	};
@@ -73,15 +75,24 @@
 		const result = hljs.highlight(preRef.outerText, { language: languageSelected });
 		preRef.innerHTML = result.value;
 	});
-	function keyDownHandler(event:InputEvent){
-		if(event.data === 'z' && event.ctrlKey){
+	function keyDownHandler(event:KeyboardEvent){
+		if(event.key === 'z' && event.ctrlKey){
 			document.execCommand('undo')
+			const result = hljs.highlight(content, { language: languageSelected });
+			preRef.innerHTML = result.value;
+			handleSelectionChangeOfCaret()
 			event.preventDefault()
+			event.stopPropagation()
 		}
 
-		if(event.data === 'y' && event.ctrlKey){
+		if(event.key === 'y' && event.ctrlKey){
 			document.execCommand('redo')
+			const result = hljs.highlight(content, { language: languageSelected });
+			preRef.innerHTML = result.value;
+			handleSelectionChangeOfCaret()
 			event.preventDefault()
+			event.stopPropagation()
+
 		}
 		return
 	}
@@ -90,7 +101,7 @@
 <div class="code-block" contenteditable="false" spellcheck="false">
 	<div class="code-container" bind:this={ref}>
 		<pre
-			on:input={inputTextHandler}
+			on:beforeinput={handleBeforeInput}
 			on:focusin={handleFocusIn}
 			on:focusout={handleFocusOut}
 			on:keydown={keyDownHandler}
@@ -123,6 +134,13 @@
 </div>
 
 <style>
+	[contenteditable='plaintext-only']{
+		&:focus{
+			border: none;
+			outline: none;
+		}
+		
+	}
 	pre:focus ~ .code-caret {
 		display: block;
 	}
@@ -137,29 +155,32 @@
 		border-radius: 10px;
 		position: relative;
 		width: 100%;
-		min-height: 100px;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
+		background-color: var(--var-night);
+		min-height: 40px;
+		height: auto;
 		z-index: 10;
 		& > .text-code-area {
 			opacity: 1;
 			color: transparent;
 			width: 100%;
 			height: 100%;
-			position: absolute;
-			top: 0;
-			left: 0;
 			z-index: 20;
-			padding: 0;
+			padding: 8px;
 			margin: 0;
+			grid-row: 1 / 1;
+			grid-column: 1 / 1;
 		}
 		& > pre {
 			width: 100%;
-			padding: 0;
+			padding: 8px;
 			margin: 0;
 			height: 100%;
-			position: absolute;
-			top: 0;
-			left: 0;
 			z-index: 10;
+			grid-row: 1 / 1;
+			grid-column: 1 / 1;
 		}
 	}
 	.code-block {
@@ -179,7 +200,7 @@
 			list-style: none;
 			height: 200px;
 			padding: 5px 0;
-			background-color: #212121;
+			background-color: var(--var-night-light);
 			overflow-y: scroll;
 			width: 110px;
 			border-radius: 10px;
@@ -192,7 +213,7 @@
 					border: none;
 					color: white;
 					font-size: 1rem;
-					background-color: #212121;
+					background-color: var(--var-night-light);
 					padding: 4px;
 					cursor: pointer;
 					&:hover {
@@ -209,7 +230,7 @@
 			width: 90px;
 			cursor: pointer;
 			padding: 5px 4px;
-			background-color: #212121;
+			background-color: var(--var-night-light);
 			font-size: 1rem;
 			border-radius: 8px;
 			text-transform: capitalize;
