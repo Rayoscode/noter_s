@@ -30,37 +30,37 @@
 		caretRef.style.top = `${rect?.y - preRef.getBoundingClientRect().top}px`;
 		caretRef.style.left = `${rect.x - preRef.getBoundingClientRect().left}px`;
 	};
-	const handleBeforeInput = (ev:InputEvent) => {
+	const handleBeforeInput = (ev: InputEvent) => {
 		if (ev.target.outerText === '') {
 			ev.preventDefault();
 			return;
 		}
-		if(ev.inputType === 'insertText'){
-			document.execCommand('insertText',false,ev.data as string)
+		if (ev.inputType === 'insertText') {
+			document.execCommand('insertText', false, ev.data as string);
 			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
 			preRef.innerHTML = result.value;
-			ev.stopImmediatePropagation()
-			ev.preventDefault()
-			return
+			ev.stopImmediatePropagation();
+			ev.preventDefault();
+			return;
 		}
-		if(ev.inputType === 'insertLineBreak'){
-			document.execCommand('insertLineBreak')
+		if (ev.inputType === 'insertLineBreak') {
+			document.execCommand('insertLineBreak');
 			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
 			preRef.innerHTML = result.value;
-			ev.stopImmediatePropagation()
-			ev.preventDefault()
-			return
+			ev.stopImmediatePropagation();
+			ev.preventDefault();
+			return;
 		}
-		if(ev.inputType === 'deleteContentBackward'){
-			document.execCommand('delete')
+		if (ev.inputType === 'deleteContentBackward') {
+			document.execCommand('delete');
 			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
 			preRef.innerHTML = result.value;
-			handleSelectionChangeOfCaret()
-			ev.stopPropagation()
-			ev.preventDefault()
-			return			
+			handleSelectionChangeOfCaret();
+			ev.stopPropagation();
+			ev.preventDefault();
+			return;
 		}
-	}
+	};
 	const handleFocusIn = () => {
 		document.addEventListener('selectionchange', handleSelectionChangeOfCaret);
 	};
@@ -75,26 +75,25 @@
 		const result = hljs.highlight(preRef.outerText, { language: languageSelected });
 		preRef.innerHTML = result.value;
 	});
-	function keyDownHandler(event:KeyboardEvent){
-		if(event.key === 'z' && event.ctrlKey){
-			document.execCommand('undo')
+	function keyDownHandler(event: KeyboardEvent) {
+		if (event.key === 'z' && event.ctrlKey) {
+			document.execCommand('undo');
 			const result = hljs.highlight(content, { language: languageSelected });
 			preRef.innerHTML = result.value;
-			handleSelectionChangeOfCaret()
-			event.preventDefault()
-			event.stopPropagation()
+			handleSelectionChangeOfCaret();
+			event.preventDefault();
+			event.stopPropagation();
 		}
 
-		if(event.key === 'y' && event.ctrlKey){
-			document.execCommand('redo')
+		if (event.key === 'y' && event.ctrlKey) {
+			document.execCommand('redo');
 			const result = hljs.highlight(content, { language: languageSelected });
 			preRef.innerHTML = result.value;
-			handleSelectionChangeOfCaret()
-			event.preventDefault()
-			event.stopPropagation()
-
+			handleSelectionChangeOfCaret();
+			event.preventDefault();
+			event.stopPropagation();
 		}
-		return
+		return;
 	}
 </script>
 
@@ -134,12 +133,11 @@
 </div>
 
 <style>
-	[contenteditable='plaintext-only']{
-		&:focus{
+	[contenteditable='plaintext-only'] {
+		&:focus {
 			border: none;
 			outline: none;
 		}
-		
 	}
 	pre:focus ~ .code-caret {
 		display: block;
@@ -149,6 +147,7 @@
 		position: absolute;
 		width: 1px;
 		height: 15px;
+		transition: all 0.1s ease-out;
 		background-color: white;
 	}
 	.code-container {
