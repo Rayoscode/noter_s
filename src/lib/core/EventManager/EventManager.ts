@@ -32,7 +32,6 @@ export class EventManager {
 	private init() {
     for (const event in this.events) {
       this.container.addEventListener(event, (ev) => {
-        console.log(ev)
         const range = getSelection()?.getRangeAt(0).cloneRange() as Range
         const stateResult = this.updateStateFromEvent(event,ev,range)
         this.events[event].forEach((triggerEvent) => {          

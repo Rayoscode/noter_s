@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { afterUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import hljs from 'highlight.js';
 	import Dropdown from '../Dropdown/Dropdown.svelte';
-	/** @type {HTMLElement}*/
-	let ref;
+	// NOTE: Quiza es mejor para el numero de la linea, dentro de la div line element, insertarlo en un span el numero, ya que con el split tenemos el index, y ahi vamos a poder modificar el espacio
 	const languages = [
 		'javascript',
 		'java',
@@ -30,56 +29,73 @@
 		caretRef.style.top = `${rect?.y - preRef.getBoundingClientRect().top}px`;
 		caretRef.style.left = `${rect.x - preRef.getBoundingClientRect().left}px`;
 	};
+	const handleUpdateHightLightedCode = (code: string) => {
+		const result = hljs.highlight(code, { language: languageSelected });
+		console.log({ value: result.value, code });
+		// if(result.value.endsWith('\n')){
+
+		// } else {
+
+		// }
+		const parsedByNewLineContent = result.value.split('\n');
+		let codeParsed = '';
+		parsedByNewLineContent.forEach((line, idx) => {
+			codeParsed += `<div class="code-line"><span class='code-number'>${idx + 1}</span><span>${
+				line === '' ? '<br>' : line
+			}</span></div>`;
+		});
+		preRef.innerHTML = codeParsed;
+	};
+
 	const handleBeforeInput = (ev: InputEvent) => {
+		ev.preventDefault();
 		if (ev.target.outerText === '') {
-			ev.preventDefault();
 			return;
 		}
 		if (ev.inputType === 'insertText') {
 			document.execCommand('insertText', false, ev.data as string);
-			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
-			preRef.innerHTML = result.value;
+			handleUpdateHightLightedCode(ev.target.outerText);
 			ev.stopImmediatePropagation();
 			ev.preventDefault();
 			return;
 		}
-		if (ev.inputType === 'insertLineBreak') {
+		if (ev.inputType === 'insertParagraph') {
 			document.execCommand('insertLineBreak');
-			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
-			preRef.innerHTML = result.value;
+			handleUpdateHightLightedCode(
+				(ev.target.outerText as string).substring(0, ev.target.outerText.length - 1)
+			);
 			ev.stopImmediatePropagation();
 			ev.preventDefault();
 			return;
 		}
 		if (ev.inputType === 'deleteContentBackward') {
+			// debugger;
 			document.execCommand('delete');
-			const result = hljs.highlight(ev.target.outerText, { language: languageSelected });
-			preRef.innerHTML = result.value;
+			console.log({ element: ev.target });
+			handleUpdateHightLightedCode(ev.target.outerText);
 			handleSelectionChangeOfCaret();
 			ev.stopPropagation();
 			ev.preventDefault();
 			return;
 		}
 	};
+
 	const handleFocusIn = () => {
 		document.addEventListener('selectionchange', handleSelectionChangeOfCaret);
 	};
+
 	const handleFocusOut = () => {
 		document.removeEventListener('selectionchange', handleSelectionChangeOfCaret);
 	};
+
 	onMount(() => {
-		let result = hljs.highlight(content, { language: languageSelected });
-		preRef.innerHTML = result.value;
+		handleUpdateHightLightedCode(content);
 	});
-	afterUpdate(() => {
-		const result = hljs.highlight(preRef.outerText, { language: languageSelected });
-		preRef.innerHTML = result.value;
-	});
+
 	function keyDownHandler(event: KeyboardEvent) {
 		if (event.key === 'z' && event.ctrlKey) {
 			document.execCommand('undo');
-			const result = hljs.highlight(content, { language: languageSelected });
-			preRef.innerHTML = result.value;
+			handleUpdateHightLightedCode(content);
 			handleSelectionChangeOfCaret();
 			event.preventDefault();
 			event.stopPropagation();
@@ -87,8 +103,7 @@
 
 		if (event.key === 'y' && event.ctrlKey) {
 			document.execCommand('redo');
-			const result = hljs.highlight(content, { language: languageSelected });
-			preRef.innerHTML = result.value;
+			handleUpdateHightLightedCode(content);
 			handleSelectionChangeOfCaret();
 			event.preventDefault();
 			event.stopPropagation();
@@ -98,16 +113,16 @@
 </script>
 
 <div class="code-block" contenteditable="false" spellcheck="false">
-	<div class="code-container" bind:this={ref}>
+	<div class="code-container">
 		<pre
 			on:beforeinput={handleBeforeInput}
 			on:focusin={handleFocusIn}
 			on:focusout={handleFocusOut}
 			on:keydown={keyDownHandler}
 			class="text-code-area"
-			contenteditable="plaintext-only"
+			contenteditable="true"
 			bind:textContent={content}></pre>
-		<pre bind:this={preRef}></pre>
+		<pre class="editor-theme-custom highlighted-code" bind:this={preRef}></pre>
 		<div bind:this={caretRef} class="code-caret"></div>
 	</div>
 	<div class="dropdown-container">
@@ -121,6 +136,7 @@
 						<button
 							on:click={() => {
 								languageSelected = language;
+								handleUpdateHightLightedCode(content);
 							}}
 						>
 							{language}
@@ -133,14 +149,26 @@
 </div>
 
 <style>
-	[contenteditable='plaintext-only'] {
+	[contenteditable='true'] {
 		&:focus {
 			border: none;
 			outline: none;
 		}
 	}
+
 	pre:focus ~ .code-caret {
 		display: block;
+	}
+	.highlighted-code {
+		& > .code-line {
+			& > .code-number {
+				width: 32px;
+				display: inline-block;
+				text-align: right;
+				padding-right: 8px;
+			}
+			line-height: 16px;
+		}
 	}
 	.code-caret {
 		display: none;
@@ -150,6 +178,7 @@
 		transition: all 0.1s ease-out;
 		background-color: white;
 	}
+
 	.code-container {
 		border-radius: 10px;
 		position: relative;
@@ -157,7 +186,7 @@
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
-		background-color: var(--var-night);
+		background-color: var(--var-bg-primary);
 		min-height: 40px;
 		height: auto;
 		z-index: 10;
@@ -165,9 +194,12 @@
 			opacity: 1;
 			color: transparent;
 			width: 100%;
+			display: flex;
 			height: 100%;
 			z-index: 20;
+			line-height: 16px;
 			padding: 8px;
+			padding-left: 40px;
 			margin: 0;
 			grid-row: 1 / 1;
 			grid-column: 1 / 1;

@@ -102,6 +102,7 @@
 		list-style: none;
 		display: flex;
 		margin: 20px 0;
+		margin-left: 20px;
 		gap: 10px;
 		& img {
 			width: 30px;
