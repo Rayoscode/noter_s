@@ -20,9 +20,20 @@
 		'ast'
 	];
 	let languageSelected = 'javascript';
-	let content = '';
+	let content = '\n';
 	let preRef: HTMLElement;
 	let caretRef: HTMLElement;
+	function splitByNewLineCode(code: string): string[] {
+		let indexNewLine = code.indexOf('\n');
+		if (code === '') {
+			return [];
+		}
+		if (indexNewLine === -1) {
+			return [code];
+		} else {
+			return [code.slice(0, indexNewLine), ...splitByNewLineCode(code.slice(indexNewLine + 1))];
+		}
+	}
 	const handleSelectionChangeOfCaret = () => {
 		const range = getSelection()?.getRangeAt(0);
 		const rect = range?.getBoundingClientRect() as DOMRect;
@@ -31,13 +42,8 @@
 	};
 	const handleUpdateHightLightedCode = (code: string) => {
 		const result = hljs.highlight(code, { language: languageSelected });
-		console.log({ value: result.value, code });
-		// if(result.value.endsWith('\n')){
-
-		// } else {
-
-		// }
-		const parsedByNewLineContent = result.value.split('\n');
+		// debugger;
+		const parsedByNewLineContent = splitByNewLineCode(result.value);
 		let codeParsed = '';
 		parsedByNewLineContent.forEach((line, idx) => {
 			codeParsed += `<div class="code-line"><span class='code-number'>${idx + 1}</span><span>${
@@ -61,17 +67,18 @@
 		}
 		if (ev.inputType === 'insertParagraph') {
 			document.execCommand('insertLineBreak');
-			handleUpdateHightLightedCode(
-				(ev.target.outerText as string).substring(0, ev.target.outerText.length - 1)
-			);
-			ev.stopImmediatePropagation();
-			ev.preventDefault();
+			handleUpdateHightLightedCode(ev?.target?.outerText as string);
+			// ev.stopImmediatePropagation();
+			// ev.preventDefault();
+			return;
+		}
+		if (ev.inputType === 'insertLineBreak') {
+			document.execCommand('insertLineBreak');
+			handleUpdateHightLightedCode(ev?.target?.outerText as string);
 			return;
 		}
 		if (ev.inputType === 'deleteContentBackward') {
-			// debugger;
 			document.execCommand('delete');
-			console.log({ element: ev.target });
 			handleUpdateHightLightedCode(ev.target.outerText);
 			handleSelectionChangeOfCaret();
 			ev.stopPropagation();
@@ -160,6 +167,7 @@
 		display: block;
 	}
 	.highlighted-code {
+		opacity: 1;
 		& > .code-line {
 			& > .code-number {
 				width: 32px;
@@ -175,7 +183,7 @@
 		position: absolute;
 		width: 1px;
 		height: 15px;
-		transition: all 0.1s ease-out;
+		transition: all 120ms ease-out;
 		background-color: white;
 	}
 
@@ -194,7 +202,6 @@
 			opacity: 1;
 			color: transparent;
 			width: 100%;
-			display: flex;
 			height: 100%;
 			z-index: 20;
 			line-height: 16px;
@@ -222,6 +229,7 @@
 			top: 0.25rem;
 			opacity: 0;
 			right: 0.5rem;
+			z-index: 20;
 			transition: opacity 0.3s ease-in-out;
 		}
 		&:hover .dropdown-container {

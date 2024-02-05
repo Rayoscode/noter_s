@@ -23,7 +23,7 @@
 	afterUpdate(() => {
 		if (refBody) {
 			const bounding = refButton.getBoundingClientRect();
-			refBody.style.top = bounding.height + 10 + 'px';
+			refBody.style.top = bounding.height + 5 + 'px';
 		}
 	});
 </script>
