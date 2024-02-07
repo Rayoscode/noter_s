@@ -6,7 +6,7 @@
 	import { UIComponents } from '$lib/core/constants/BasicUIComponents';
 	import { onMount } from 'svelte';
 	import Toolbar from '$lib/components/toolbar/Toolbar.svelte';
-
+	import Dropdown from '$lib/MocaUI/src/components/Dropdown/Dropdown.svelte';
 	let ref: HTMLElement;
 	let editor: Editor;
 	onMount(() => {
@@ -23,6 +23,13 @@
 
 <h1>Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<Dropdown>
+	<svelte:fragment slot="button-trigger">
+		<span>Abrir </span>
+	</svelte:fragment>
+	<p>Holi</p>
+</Dropdown>
+
 <div class="content" bind:this={ref}></div>
 <Toolbar {editor}></Toolbar>
 

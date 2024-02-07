@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import hljs from 'highlight.js';
-	import Dropdown from '../Dropdown/Dropdown.svelte';
 	// NOTE: Quiza es mejor para el numero de la linea, dentro de la div line element, insertarlo en un span el numero, ya que con el split tenemos el index, y ahi vamos a poder modificar el espacio
 	const languages = [
 		'javascript',
@@ -133,10 +132,10 @@
 		<div bind:this={caretRef} class="code-caret"></div>
 	</div>
 	<div class="dropdown-container">
-		<Dropdown>
-			<span slot="button">
-				{languageSelected}
-			</span>
+		<button>
+			{languageSelected}
+		</button>
+		<div class="dropdown-body">
 			<ul>
 				{#each languages as language}
 					<li>
@@ -151,7 +150,7 @@
 					</li>
 				{/each}
 			</ul>
-		</Dropdown>
+		</div>
 	</div>
 </div>
 
@@ -230,28 +229,54 @@
 			opacity: 0;
 			right: 0.5rem;
 			z-index: 20;
-			transition: opacity 0.3s ease-in-out;
+			transition: opacity 0.2s ease-in-out;
 		}
 		&:hover .dropdown-container {
 			opacity: 1;
 		}
-		& ul {
+		& .dropdown-container {
+			opacity: 0;
+			& > button {
+				padding: 5px 10px 5px 5px;
+				display: block;
+				min-width: 100px;
+				border-radius: var(--var-rounded-sm);
+				appearance: none;
+				border: none;
+				background-color: var(--var-bg-secondary);
+				cursor: pointer;
+				font-size: 1rem;
+				text-align: right;
+				color: var(--var-color-text);
+				&:hover ~ .dropdown-body {
+					scale: 100% 100%;
+				}
+			}
+		}
+		& .dropdown-body {
 			list-style: none;
 			height: 200px;
+			scale: 100% 0;
 			padding: 5px 0;
 			background-color: var(--var-night-light);
 			overflow-y: scroll;
+			transition: all 0.2s ease 0.1s;
+			color: var(--var-color-text);
 			width: 110px;
 			border-radius: 10px;
+			&:hover {
+				scale: 100% 100%;
+			}
 			& li {
 				width: 100%;
+				color: var(--var-color-text);
 
 				& button {
 					width: 100%;
 					text-transform: capitalize;
 					border: none;
-					color: white;
 					font-size: 1rem;
+					color: var(--var-color-text);
 					background-color: var(--var-night-light);
 					padding: 4px;
 					cursor: pointer;
@@ -261,7 +286,7 @@
 				}
 			}
 		}
-		&:hover ul {
+		&:hover .dropdown-body {
 			display: block;
 		}
 		& span[slot='button'] {

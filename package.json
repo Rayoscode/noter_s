@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"highlight.js": "^11.9.0"
+		"highlight.js": "^11.9.0",
+		"open-props": "^1.6.18"
 	}
 }
