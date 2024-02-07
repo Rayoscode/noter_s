@@ -29,23 +29,23 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --var-bg-primary:var(--var-night);
-    --var-bg-secondary:var(--var-eerie-black);
-    --var-bg-tertiary:var(--var-onyx);
-    --var-color-text:var(--var-light);
+    --bg-primary:var(--var-night);
+    --bg-secondary:var(--var-eerie-black);
+    --bg-tertiary:var(--var-onyx);
+    --color-text:var(--var-light);
   }
 }
 @media (prefers-color-scheme: light) {
   :root {
-    --var-bg-primary:var(--var-light);
-    --var-bg-secondary:var(var(--var-light-darker));
-    --var-bg-tertiary:var(--var-platinum);
-    --var-color-text:var(--var-eerie-black)
+    --bg-primary:var(--var-light);
+    --bg-secondary:var(var(--var-light-darker));
+    --bg-tertiary:var(--var-platinum);
+    --color-text:var(--var-eerie-black)
   
   }
 }
 :root{
-  background-color: var(--var-bg-secondary);  
+  background-color: var(--bg-secondary);  
 }
 .editor-theme-custom{
   & .hljs-keyword{
@@ -57,4 +57,16 @@
   & .hljs-string{
     color: var(--var-esmerald);
   }
+}
+
+.theme-minimalist-dark{
+
+}
+
+.theme-minimalist-light{
+
+}
+
+.theme-space{
+
 }

@@ -5,6 +5,7 @@
 	import { codeBlocksCommands } from '$lib/components/Codeblock/commands/CodeBlockCommands';
 	import { UIComponents } from '$lib/core/constants/BasicUIComponents';
 	import { onMount } from 'svelte';
+	import DropDownButton from '$lib/MocaUI/src/components/Dropdown/DropDownButton/DropDownButton.svelte';
 	import Toolbar from '$lib/components/toolbar/Toolbar.svelte';
 	import Dropdown from '$lib/MocaUI/src/components/Dropdown/Dropdown.svelte';
 	let ref: HTMLElement;
@@ -27,7 +28,9 @@
 	<svelte:fragment slot="button-trigger">
 		<span>Abrir </span>
 	</svelte:fragment>
-	<p>Holi</p>
+	<DropDownButton>
+		<span> Hace click</span>
+	</DropDownButton>
 </Dropdown>
 
 <div class="content" bind:this={ref}></div>
