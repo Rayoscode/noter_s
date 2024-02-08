@@ -11,9 +11,6 @@ importers:
       highlight.js:
         specifier: ^11.9.0
         version: 11.9.0
-      open-props:
-        specifier: ^1.6.18
-        version: 1.6.18
     devDependencies:
       '@playwright/test':
         specifier: ^1.28.1
@@ -1729,10 +1726,6 @@ packages:
     dependencies:
       mimic-fn: 4.0.0
     dev: true
-
-  /open-props@1.6.18:
-    resolution: {integrity: sha512-xhkbGo6vFdYHWR9mt81p4mlPoRLQHunA6XJAuQ2cUyvoOGKGxDj8dGgXDIbR1EMJVyHPxU1AbtfbloAIRLHWKw==}
-    dev: false
 
   /optionator@0.9.3:
     resolution: {integrity: sha512-JjCoypp+jKn1ttEFExxhetCKeJt9zhAgAve5FXHixTvFDW/5aEktX9bufBKLRRMdU7bNtpLfcGu94B3cdEJgjg==}

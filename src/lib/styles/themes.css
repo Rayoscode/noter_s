@@ -1,15 +1,30 @@
 @import "open-props/style";
 :root{
-  --var-night:#111111;
-  --var-night-light:#0F0F0F;
+  --sepia-10:#FFE0B5;
+  --sepia-20:#FFE4BD; 
+  --sepia-30:#FFE8C8;
+  --sepia-40:#FFEDD3;
+  --sepia-50:#FFF1DE;
+  --cool-gray-10:#323C47;
+  --cool-gray-20:#73889D;
+  --cool-gray-30:#A8B5C3;
+  --cool-gray-40:#CBD3DB;
+  --cool-gray-50:#D0D7DE;
+  --night-900:#111111;
+  --night-800:#232323;
+  --night-700:#343434;
+  --night-600:#454545;
+  --night-500:#565656;
+  --night-400:#888888;
+  --night-300:#AAAAAA;
+  --night-200:#CCCCCC;
+  --night-100:#DDDDDD;
+  --seasalt:#F7F7F7;
+  --white:#F2F3F4;
   --var-onyx:#353839;
   --var-jet:#343434;
   --var-eerie-black:#1B1B1B;
-  --var-light:#F7F7F7;
-  --var-light-darker:#F2F3F4;
-  --var-gray:#808080;
-  --var-silver:#C0C0C0;
-  --var-platinum:#E5E4E2;
+  --var-platinum:#020201;
   --var-imperial-red:#ED2939;
   --var-blue-france:#318CE7;
   --var-esmerald:#50C878;
@@ -64,6 +79,9 @@
 }
 
 .theme-minimalist-light{
+
+}
+theme-sepia{
 
 }
 
