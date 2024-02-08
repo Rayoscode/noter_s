@@ -1,0 +1,41 @@
+
+@mixin transition-scale-fade-out{
+
+}
+.ui-button{
+  &.solid{
+    --bg-button:var(--bg-primary);    
+    --rounded-button:var(--radius-3);
+    --border-button:none;
+    --shadow-button:var(--shadow-1);
+    --color-text:var(--color-text-primary);
+
+  }
+  &.shadow{
+    --bg-button:;    
+    --rounded-button:var(--radius-3);
+    --border-button:;
+    --shadow-button:;
+    --color-text-primary:;
+    --button-transition:;
+
+  }
+  &.light{
+    --bg-button:;    
+    --rounded-button:;
+    --border-button:;
+    --shadow-button:;
+    --color-text-primary:;
+    --button-transition:;
+
+  }
+  &.flat{
+    --bg-button:;    
+    --rounded-button:;
+    --border-button:;
+    --shadow-button:;
+    --color-text-primary:;
+    --button-transition:;
+
+  }
+}

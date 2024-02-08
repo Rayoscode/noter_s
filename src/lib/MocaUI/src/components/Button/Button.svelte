@@ -19,7 +19,7 @@
 		border-radius: var(--rounded-button);
 		border: var(--border-button);
 		box-shadow: var(--shadow-button);
-		color: var(--color-text);
+		color: var(--color-text-primary);
 		cursor: pointer;
 		transition: var(--button-transition);
 	}

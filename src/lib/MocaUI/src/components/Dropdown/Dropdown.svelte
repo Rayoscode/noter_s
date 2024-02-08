@@ -23,16 +23,15 @@
 		}
 	};
 	const clickOnOpenedDropdown = (ev: MouseEvent) => {
-		if (!(ev.target as Element).closest('.dropdown')) {
+		if (!(ev.target as Element).closest('.ui-dropdown')) {
 			window.removeEventListener('click', clickOnOpenedDropdown);
 			container.setAttribute('open', 'false');
 		}
-		console.log('pasanding');
 		ev.preventDefault();
 	};
 </script>
 
-<div class="dropdown" bind:this={container} open="false">
+<div class="ui-dropdown" bind:this={container} open="false">
 	<Button
 		buttonProps={{
 			'on:click': () => {
@@ -43,19 +42,17 @@
 	>
 		<slot name="button-trigger" />
 	</Button>
-	<button on:click={onClickButtonOpener}> </button>
-
-	<div bind:this={content} style="top:{positionContent.top}px;left:0;" class="dropdown-content">
+	<div bind:this={content} style="top:{positionContent.top}px;left:0;" class="ui-dropdown-content">
 		<slot />
 	</div>
 </div>
 
 <style>
-	.dropdown {
+	.ui-dropdown {
 		position: relative;
 		display: inline-block;
 	}
-	.dropdown-content {
+	.ui-dropdown-content {
 		width: auto;
 		height: auto;
 		transition:
@@ -70,21 +67,11 @@
 			scale 0.2s var(--ease-5),
 			opacity 0.4s var(--ease-4);
 		position: absolute;
-
-		scale: 100% 100%;
-		/* translate: 0 0; */
+		scale: 100%;
 		opacity: 1;
 	}
-	.dropdown[open='false'] > .dropdown-content {
+	.ui-dropdown[open='false'] > .ui-dropdown-content {
 		scale: 0;
-		/* translate: 0 20px; */
 		opacity: 0;
-	}
-	button {
-		appearance: none;
-		border: none;
-		background-color: inherit;
-		color: var(--var-text-color);
-		cursor: pointer;
 	}
 </style>

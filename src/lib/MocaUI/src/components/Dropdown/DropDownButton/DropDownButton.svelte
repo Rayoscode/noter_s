@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Button from '../../Button/Button.svelte';
 	export let shouldCloseOnClick: boolean = true;
 	export let onClick = () => {};
+	export let className = '';
 	let parentRef: Element;
 	let buttonRef: Element;
 
 	onMount(() => {
-		parentRef = buttonRef.closest('.dropdown') as Element;
+		parentRef = buttonRef.closest('.ui-dropdown') as Element;
 	});
 
 	function handleClickEvent() {
@@ -18,7 +18,7 @@
 	}
 </script>
 
-<button class="ui-dropdown-button" bind:this={buttonRef} on:click={handleClickEvent}>
+<button class="ui-dropdown-button {className}" bind:this={buttonRef} on:click={handleClickEvent}>
 	<slot />
 </button>
 

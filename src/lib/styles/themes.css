@@ -1,4 +1,6 @@
-@import "open-props/style";
+@import "https://unpkg.com/open-props/easings.min.css";
+@import "https://unpkg.com/open-props/borders.min.css";
+@import "https://unpkg.com/open-props/shadows.min.css";
 :root{
   --sepia-10:#FFE0B5;
   --sepia-20:#FFE4BD; 
@@ -24,7 +26,6 @@
   --var-onyx:#353839;
   --var-jet:#343434;
   --var-eerie-black:#1B1B1B;
-  --var-platinum:#020201;
   --var-imperial-red:#ED2939;
   --var-blue-france:#318CE7;
   --var-esmerald:#50C878;
