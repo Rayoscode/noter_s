@@ -12,13 +12,15 @@
 
   }
   &.shadow{
-    --bg-button:;    
+    --shadow-color:--bg-primary;
+    --bg-button:var(--bg-primary);    
     --rounded-button:var(--radius-3);
-    --border-button:;
-    --shadow-button:;
-    --color-text-primary:;
-    --button-transition:;
-
+    --border-button:var(--radius-3);
+    --shadow-button:--shadow-6;
+    --color-text-primary:var(--color-text-primary);
+    &:hover{
+      filter: var(--hover-filter-button)
+    }
   }
   &.light{
     --bg-button:;    
