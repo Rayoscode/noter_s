@@ -8,7 +8,11 @@
 	export let buttonProps: ButtonElementProps | undefined = {};
 </script>
 
-<button use:buttonAction={buttonProps} class="ui-button {variant} {className}" style={css}>
+<button
+	use:buttonAction={buttonProps}
+	class="ui-button {variant} {className}text-red-500"
+	style={css}
+>
 	<slot />
 </button>
 
@@ -16,7 +20,7 @@
 	:global(.ui-button) {
 		appearance: none;
 		border: none;
-  	transition: all 0.3s ease;
+		transition: all 0.3s ease;
 		/* background-color: var(--bg-button);
 		border-radius: var(--rounded-button);
 		border: var(--border-button);
