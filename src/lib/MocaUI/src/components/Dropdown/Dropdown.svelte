@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Button from '../Button/Button.svelte';
+	import { events } from '$lib/core/BasicEvents/basicEvents';
 	export let onClickTrigger = () => {};
 	let container: HTMLElement;
-	let content: Element;
 	let positionContent = { top: 0, left: 0 };
 	onMount(() => {
 		container.setAttribute('open', 'false');
@@ -34,15 +34,17 @@
 <div class="ui-dropdown" bind:this={container} open="false">
 	<Button
 		buttonProps={{
-			'on:click': () => {
-				onClickButtonOpener();
-				onClickTrigger();
+			events: {
+				click: () => {
+					onClickButtonOpener();
+					onClickTrigger();
+				}
 			}
 		}}
 	>
 		<slot name="button-trigger" />
 	</Button>
-	<div bind:this={content} style="top:{positionContent.top}px;left:0;" class="ui-dropdown-content">
+	<div style="top:{positionContent.top}px;left:0;" class="ui-dropdown-content">
 		<slot />
 	</div>
 </div>
