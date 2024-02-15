@@ -8,11 +8,7 @@
 	export let buttonProps: ButtonElementProps | undefined = {};
 </script>
 
-<button
-	use:buttonAction={buttonProps}
-	class="ui-button {variant} {className}text-red-500"
-	style={css}
->
+<button use:buttonAction={buttonProps} class="ui-button {variant} {className}" style={css}>
 	<slot />
 </button>
 
